@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shelf — My Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown:       #a46636;
+    --brown-deep:  #7a4a22;
+    --brown-dark:  #3b2010;
+    --green:       #6bbf8e;
+    --green-light: #a2d5a1;
+    --green-dark:  #3d7a56;
+    --cream:       #f6e9d7;
+    --cream-dark:  #ecdcc4;
+    --cream-deeper:#e0cdb0;
+    --gold:        #f7e7b5;
+    --gold-deep:   #d4a853;
+    --text-dark:   #2a1a0e;
+    --text-mid:    #5c3d1e;
+    --text-light:  #8c6a45;
+    --shadow-sm:   0 2px 8px rgba(58,28,8,.10);
+    --shadow-md:   0 4px 20px rgba(58,28,8,.14);
+    --shadow-lg:   0 8px 40px rgba(58,28,8,.18);
+    --radius:      12px;
+    --radius-sm:   8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    opacity: .035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
+  #app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── Top nav ─────────────────────────────────────────────── */
+  .topnav {
+    background: var(--brown-dark);
+    padding: 0 24px; height: 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topnav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--gold); letter-spacing: .02em; text-decoration: none;
+  }
+  .topnav-links { display: flex; gap: 6px; align-items: center; }
+  .topnav-links a {
+    color: var(--cream); font-size: .82rem; text-decoration: none;
+    padding: 5px 12px; border-radius: 20px; transition: background .2s, color .2s;
+  }
+  .topnav-links a:hover { background: rgba(246,233,215,.12); color: var(--gold); }
+  .topnav-links .active { color: var(--gold); }
+
+  /* ── Page layout ─────────────────────────────────────────── */
+  .page-wrap { max-width: 700px; margin: 0 auto; padding: 32px 16px 80px; }
+
+  /* ── Auth banner (when logged out) ─────────────────────── */
+  .auth-banner {
+    background: linear-gradient(120deg, var(--green) 0%, var(--green-light) 55%, var(--gold-deep) 100%);
+    padding: 32px 28px 28px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  .auth-banner::after {
+    content: '🔖'; position: absolute; right: -8px; bottom: -14px;
+    font-size: 80px; opacity: .12; pointer-events: none; transform: rotate(-6deg);
+  }
+  .auth-banner h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 4vw, 1.7rem); font-weight: 900;
+    color: var(--brown-dark); margin-bottom: 5px;
+  }
+  .auth-banner p {
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--brown-deep); font-size: .88rem;
+  }
+
+  /* ── Auth card ───────────────────────────────────────────── */
+  .auth-card {
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow-md); padding: 28px 24px;
+    margin-bottom: 20px;
+  }
+  .auth-tabs { display: flex; margin-bottom: 24px; border-bottom: 2px solid var(--cream-deeper); }
+  .auth-tab {
+    flex: 1; padding: 10px; text-align: center;
+    font-size: .88rem; font-weight: 500; cursor: pointer;
+    color: var(--text-light); border: none; background: transparent;
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: all .18s;
+  }
+  .auth-tab.active { color: var(--brown); border-bottom-color: var(--brown); }
+
+  .auth-form { display: none; }
+  .auth-form.active { display: block; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: .78rem; font-weight: 500;
+    color: var(--text-light); text-transform: uppercase;
+    letter-spacing: .06em; margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%; padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--cream-deeper); background: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: .88rem;
+    color: var(--text-dark); outline: none; transition: border-color .18s;
+  }
+  .form-input:focus { border-color: var(--green); background: white; }
+  .form-input::placeholder { color: var(--text-light); }
+
+  .btn-full {
+    width: 100%; padding: 11px; border: none; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500;
+    cursor: pointer; transition: all .18s; margin-top: 4px;
+  }
+  .btn-submit { background: var(--brown); color: var(--cream); }
+  .btn-submit:hover { background: var(--brown-deep); }
+  .btn-submit:active { transform: scale(.98); }
+
+  .form-footer {
+    font-size: .78rem; color: var(--text-light);
+    text-align: center; margin-top: 14px;
+    font-family: 'Lora', serif; font-style: italic;
+  }
+  .form-error {
+    font-size: .8rem; color: #c0392b; margin-top: 8px;
+    padding: 8px 12px; background: #fdf0ee;
+    border-radius: var(--radius-sm); display: none;
+  }
+  .form-error.show { display: block; }
+
+  /* ── Profile view (logged in) ───────────────────────────── */
+  #profileView { display: none; }
+
+  .profile-header {
+    background: linear-gradient(120deg, var(--green) 0%, var(--green-light) 55%, var(--gold-deep) 100%);
+    padding: 28px 24px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 18px;
+    position: relative; overflow: hidden;
+  }
+  .profile-header::after {
+    content: '📚'; position: absolute; right: 8px; bottom: -12px;
+    font-size: 72px; opacity: .10; pointer-events: none; transform: rotate(-4deg);
+  }
+  .avatar {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--brown-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: var(--gold);
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .profile-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700; color: var(--brown-dark);
+  }
+  .profile-info p { font-size: .82rem; color: var(--brown-deep); margin-top: 2px; }
+  .profile-info small { font-size: .72rem; color: var(--brown-deep); font-style: italic; }
+
+  /* ── Section cards ───────────────────────────────────────── */
+  .section-card {
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); padding: 22px 20px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: .95rem; font-weight: 700; color: var(--text-dark);
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--cream-darker, #e0cdb0);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── Owned books list ───────────────────────────────────── */
+  .owned-list { display: flex; flex-direction: column; gap: 10px; }
+  .owned-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px; border-radius: var(--radius-sm);
+    background: var(--cream); cursor: pointer;
+    transition: background .15s;
+  }
+  .owned-item:hover { background: var(--cream-dark); }
+  .owned-thumb {
+    width: 38px; height: 52px; border-radius: 5px;
+    background: linear-gradient(135deg, var(--brown) 0%, var(--brown-deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .owned-info { flex: 1; min-width: 0; }
+  .owned-title {
+    font-family: 'Playfair Display', serif;
+    font-size: .88rem; font-weight: 600;
+    color: var(--text-dark); overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .owned-meta { font-size: .72rem; color: var(--text-light); margin-top: 2px; }
+  .owned-read-btn {
+    padding: 5px 14px; border-radius: 14px; border: none;
+    background: var(--green); color: var(--brown-dark);
+    font-size: .76rem; font-weight: 500; cursor: pointer;
+    transition: background .15s; white-space: nowrap;
+  }
+  .owned-read-btn:hover { background: var(--green-dark); color: white; }
+  .empty-owned {
+    text-align: center; padding: 30px 20px;
+    color: var(--text-light); font-family: 'Lora', serif; font-style: italic;
+    font-size: .88rem;
+  }
+  .empty-owned span { display: block; font-size: 1.8rem; margin-bottom: 8px; }
+
+  /* ── Stats ───────────────────────────────────────────────── */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .stat-box {
+    background: var(--cream); border-radius: var(--radius-sm);
+    padding: 14px 10px; text-align: center;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 700; color: var(--brown);
+  }
+  .stat-label { font-size: .7rem; color: var(--text-light); margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Danger zone / settings ─────────────────────────────── */
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--cream-dark);
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: .85rem; color: var(--text-mid); }
+  .setting-value { font-size: .82rem; color: var(--text-light); }
+  .btn-sm {
+    padding: 5px 14px; border-radius: 14px; border: none;
+    font-size: .78rem; font-weight: 500; cursor: pointer; transition: all .15s;
+  }
+  .btn-outline-brown { background: transparent; border: 1.5px solid var(--brown); color: var(--brown); }
+  .btn-outline-brown:hover { background: var(--brown); color: white; }
+  .btn-danger { background: transparent; border: 1.5px solid #e05b5b; color: #e05b5b; }
+  .btn-danger:hover { background: #e05b5b; color: white; }
+
+  .sign-out-wrap { text-align: center; margin-top: 24px; }
+  .btn-signout {
+    background: transparent; border: 1.5px solid var(--cream-deeper);
+    color: var(--text-light); padding: 9px 28px; border-radius: 24px;
+    font-family: 'DM Sans', sans-serif; font-size: .84rem;
+    cursor: pointer; transition: all .18s;
+  }
+  .btn-signout:hover { border-color: var(--brown); color: var(--brown); }
+
+  /* ── Toast ───────────────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: var(--brown-dark); color: var(--cream);
+    padding: 9px 22px; border-radius: 30px; font-size: .82rem;
+    box-shadow: var(--shadow-md); transition: transform .3s ease; z-index: 999; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a class="topnav-brand" href="library.html">✦ The Shelf</a>
+    <div class="topnav-links">
+      <a href="Main.html">Library</a>
+      <a href="Reader.html">Reader</a>
+      <a class="active" href="Account.html">Account</a>
+    </div>
+  </nav>
+
+  <!-- ── LOGGED-OUT VIEW ───────────────────────────────────── -->
+  <div id="authView">
+    <div class="auth-banner">
+      <h1>Welcome to The Shelf</h1>
+      <p>Sign in to access your library &amp; purchased books</p>
+    </div>
+
+    <div class="page-wrap" style="padding-top:0;">
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchAuthTab('login',this)">Sign In</button>
+          <button class="auth-tab" onclick="switchAuthTab('register',this)">Create Account</button>
+        </div>
+
+        <!-- Login form -->
+        <div class="auth-form active" id="form-login">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <div class="form-error" id="login-error"></div>
+          <button class="btn-full btn-submit" onclick="handleLogin()">Sign In →</button>
+          <p class="form-footer">Forgot password? <a href="#" style="color:var(--brown);text-decoration:none;" onclick="showForgot()">Reset it</a></p>
+        </div>
+
+        <!-- Register form -->
+        <div class="auth-form" id="form-register">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" id="reg-name" type="text" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="reg-email" type="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" id="reg-pass" type="password" placeholder="Min. 8 characters" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input class="form-input" id="reg-pass2" type="password" placeholder="Repeat password" autocomplete="new-password">
+          </div>
+          <div class="form-error" id="reg-error"></div>
+          <button class="btn-full btn-submit" onclick="handleRegister()">Create Account →</button>
+          <p class="form-footer">By registering you agree to our Terms &amp; Privacy Policy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGGED-IN VIEW ────────────────────────────────────── -->
+  <div id="profileView">
+    <div class="profile-header">
+      <div class="avatar" id="avatarInitials">?</div>
+      <div class="profile-info">
+        <h2 id="profileName">Reader</h2>
+        <p id="profileEmail">–</p>
+        <small id="profileJoined"></small>
+      </div>
+    </div>
+
+    <div class="page-wrap" style="padding-top:0;">
+
+      <!-- Stats -->
+      <div class="section-card">
+        <div class="section-title">📊 Your Reading</div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-num" id="statOwned">0</div>
+            <div class="stat-label">Owned</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="statFree">0</div>
+            <div class="stat-label">Free Read</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="statSpent">₹0</div>
+            <div class="stat-label">Spent</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owned books -->
+      <div class="section-card">
+        <div class="section-title">📚 My Books</div>
+        <div class="owned-list" id="ownedList">
+          <div class="empty-owned"><span>🌿</span>No purchased books yet.<br>Visit the Library to discover stories.</div>
+        </div>
+      </div>
+
+      <!-- Account settings -->
+      <div class="section-card">
+        <div class="section-title">⚙ Account</div>
+        <div class="setting-row">
+          <span class="setting-label">Email</span>
+          <span class="setting-value" id="settingEmail">–</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Password</span>
+          <button class="btn-sm btn-outline-brown" onclick="showChangePassword()">Change</button>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Reading data</span>
+          <button class="btn-sm btn-danger" onclick="clearData()">Clear</button>
+        </div>
+      </div>
+
+      <div class="sign-out-wrap">
+        <button class="btn-signout" onclick="signOut()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+<div id="toast"></div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────
+const API_URL = 'https://your-backend.com';
+
+// ── Local state ───────────────────────────────────────────────
+let currentUser = JSON.parse(localStorage.getItem('current_user') || 'null');
+let ownedIds    = JSON.parse(localStorage.getItem('owned_ids')    || '[]');
+
+// ── Boot ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (currentUser) showProfile();
+  else             showAuth();
+});
+
+function showAuth() {
+  document.getElementById('authView').style.display = 'block';
+  document.getElementById('profileView').style.display = 'none';
+}
+
+function showProfile() {
+  document.getElementById('authView').style.display = 'none';
+  document.getElementById('profileView').style.display = 'block';
+
+  const name = currentUser.name || 'Reader';
+  document.getElementById('profileName').textContent   = name;
+  document.getElementById('profileEmail').textContent  = currentUser.email || '';
+  document.getElementById('settingEmail').textContent  = currentUser.email || '';
+  document.getElementById('avatarInitials').textContent = name.charAt(0).toUpperCase();
+  if (currentUser.joined) {
+    document.getElementById('profileJoined').textContent =
+      'Member since ' + new Date(currentUser.joined).toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+  }
+
+  loadOwnedBooks();
+}
+
+// ── Auth tab ─────────────────────────────────────────────────
+function switchAuthTab(key, el) {
+  document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('form-' + key).classList.add('active');
+  clearErrors();
+}
+
+// ── Login ────────────────────────────────────────────────────
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if (!email || !pass) { showError('login-error', 'Please fill all fields.'); return; }
+  clearErrors();
+
+  try {
+    const r = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass }),
+    });
+    const j = await r.json();
+    if (!r.ok) { showError('login-error', j.message || 'Login failed.'); return; }
+    saveUser(j.user, j.token);
+    syncOwned(j.user.owned_ids || []);
+    showToast('Welcome back, ' + (j.user.name || 'Reader') + '!');
+    setTimeout(showProfile, 600);
+  } catch {
+    // Dev fallback: mock login
+    const mockUser = { name: nameFromEmail(email), email, joined: new Date().toISOString(), token: 'dev-token-' + Date.now() };
+    saveUser(mockUser, mockUser.token);
+    showToast('Signed in (dev mode)');
+    setTimeout(showProfile, 600);
+  }
+}
+
+// ── Register ─────────────────────────────────────────────────
+async function handleRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  if (!name || !email || !pass) { showError('reg-error', 'Please fill all fields.'); return; }
+  if (pass !== pass2)           { showError('reg-error', 'Passwords do not match.'); return; }
+  if (pass.length < 8)          { showError('reg-error', 'Password must be at least 8 characters.'); return; }
+  clearErrors();
+
+  try {
+    const r = await fetch(`${API_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password: pass }),
+    });
+    const j = await r.json();
+    if (!r.ok) { showError('reg-error', j.message || 'Registration failed.'); return; }
+    saveUser(j.user, j.token);
+    showToast('Account created! Welcome, ' + name + '!');
+    setTimeout(showProfile, 600);
+  } catch {
+    // Dev fallback: mock register
+    const mockUser = { name, email, joined: new Date().toISOString(), token: 'dev-token-' + Date.now() };
+    saveUser(mockUser, mockUser.token);
+    showToast('Account created (dev mode)');
+    setTimeout(showProfile, 600);
+  }
+}
+
+// ── Save session ──────────────────────────────────────────────
+function saveUser(user, token) {
+  currentUser = { ...user, token };
+  localStorage.setItem('current_user', JSON.stringify(currentUser));
+}
+
+function syncOwned(ids) {
+  const merged = [...new Set([...ownedIds, ...ids])];
+  ownedIds = merged;
+  localStorage.setItem('owned_ids', JSON.stringify(merged));
+}
+
+// ── Load owned books ──────────────────────────────────────────
+async function loadOwnedBooks() {
+  let books = [];
+  try {
+    const r = await fetch(`${API_URL}/api/user/books`, {
+      headers: { 'Authorization': `Bearer ${currentUser.token}` }
+    });
+    const j = await r.json();
+    books = j.books || [];
+    syncOwned(books.map(b => b.id));
+  } catch {
+    // Build from localStorage
+    const libJson = sessionStorage.getItem('library_cache');
+    if (libJson) {
+      const all = JSON.parse(libJson).books || [];
+      books = all.filter(b => ownedIds.includes(b.id));
+    }
+  }
+
+  renderOwnedBooks(books);
+  updateStats(books);
+}
+
+function renderOwnedBooks(books) {
+  const list = document.getElementById('ownedList');
+  if (!books.length) {
+    list.innerHTML = `<div class="empty-owned"><span>🌿</span>No purchased books yet.<br>Visit the Library to discover stories.</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  books.forEach(book => {
+    const item = document.createElement('div');
+    item.className = 'owned-item';
+    item.innerHTML = `
+      <div class="owned-thumb">📕</div>
+      <div class="owned-info">
+        <div class="owned-title">${escHtml(book.title)}</div>
+        <div class="owned-meta">${escHtml(book.author || '')} · ${book.type || ''}</div>
+      </div>
+      <button class="owned-read-btn" onclick='openBook(${JSON.stringify(book)})'>Read →</button>`;
+    list.appendChild(item);
+  });
+}
+
+function updateStats(books) {
+  const paid = books.filter(b => b.price > 0);
+  const free = books.filter(b => b.price === 0);
+  const spent = paid.reduce((s, b) => s + (b.price || 0), 0);
+  document.getElementById('statOwned').textContent = paid.length;
+  document.getElementById('statFree').textContent  = free.length;
+  document.getElementById('statSpent').textContent = '₹' + spent;
+}
+
+function openBook(book) {
+  sessionStorage.setItem('pending_book', JSON.stringify(book));
+  window.location.href = 'reader.html';
+}
+
+// ── Sign out ──────────────────────────────────────────────────
+function signOut() {
+  localStorage.removeItem('current_user');
+  currentUser = null;
+  showToast('Signed out. See you soon!');
+  setTimeout(showAuth, 800);
+}
+
+// ── Clear data ────────────────────────────────────────────────
+function clearData() {
+  if (!confirm('Clear all local reading data? Purchases are safe on the server.')) return;
+  localStorage.removeItem('owned_ids');
+  ownedIds = [];
+  showToast('Local data cleared.');
+  loadOwnedBooks();
+}
+
+// ── Change password (stub) ────────────────────────────────────
+function showChangePassword() {
+  showToast('Password change — coming soon!');
+}
+
+// ── Forgot password (stub) ────────────────────────────────────
+function showForgot() {
+  showToast('Password reset — coming soon!');
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+function clearErrors() {
+  document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+}
+function nameFromEmail(email) {
+  const part = email.split('@')[0].replace(/[._]/g, ' ');
+  return part.charAt(0).toUpperCase() + part.slice(1);
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
