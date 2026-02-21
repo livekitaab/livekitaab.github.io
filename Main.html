@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Shelf — Book Library</title>
+<title>LiveKitaab — Book Library</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -135,23 +135,41 @@
 
   /* ── Tab strip ─────────────────────────────────────── */
   .tab-strip {
-    display: flex; background: var(--cream-dark);
-    border-bottom: 2px solid var(--cream-deeper);
+    display: flex; background: var(--brown-dark);
+    border-bottom: 2px solid rgba(164,102,54,.35);
     position: sticky; top: 52px; z-index: 90;
   }
   .tab-btn {
     flex: 1; padding: 13px 8px; text-align: center;
     font-family: 'DM Sans', sans-serif; font-size: .84rem; font-weight: 500;
-    color: var(--text-light); cursor: pointer; border: none;
+    color: rgba(246,233,215,.55); cursor: pointer; border: none;
     background: transparent; transition: all .2s;
     border-bottom: 3px solid transparent; margin-bottom: -2px;
     white-space: nowrap;
   }
-  .tab-btn.active { color: var(--brown); border-bottom-color: var(--brown); }
-  .tab-btn:hover:not(.active) { color: var(--text-mid); background: rgba(164,102,54,.04); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold-deep); }
+  .tab-btn:hover:not(.active) { color: var(--cream); background: rgba(246,233,215,.06); }
 
-  /* ── Tab panels ────────────────────────────────────── */
-  .tab-panel { display: none; padding: 24px 16px 80px; animation: fadeIn .2s ease; }
+  /* ── Tab panels — wooden shelf ─────────────────────── */
+  .tab-panel {
+    display: none;
+    padding: 28px 16px 80px;
+    animation: fadeIn .2s ease;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        rgba(0,0,0,.0)  0px,  rgba(0,0,0,.0)  17px,
+        rgba(0,0,0,.05) 17px, rgba(0,0,0,.05) 18px,
+        rgba(255,255,255,.03) 18px, rgba(255,255,255,.03) 19px,
+        rgba(0,0,0,.0)  19px, rgba(0,0,0,.0)  36px
+      ),
+      linear-gradient(172deg,
+        #5c2e10 0%, #7a4422 20%, #a46636 40%,
+        #8b5530 58%, #7a4422 75%, #5c2e10 100%
+      );
+    box-shadow: inset 0 8px 20px rgba(0,0,0,.30), inset 0 -4px 10px rgba(0,0,0,.20);
+    min-height: 280px;
+  }
   .tab-panel.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -163,20 +181,20 @@
   }
   .empty-state {
     text-align: center; padding: 60px 20px;
-    color: var(--text-light); font-family: 'Lora', serif; font-style: italic;
-    font-size: 1rem;
+    color: var(--gold); font-family: 'Lora', serif; font-style: italic;
+    font-size: 1rem; text-shadow: 0 1px 3px rgba(0,0,0,.4);
   }
   .empty-state span { display: block; font-size: 2.5rem; margin-bottom: 12px; }
 
   /* ── Book card ─────────────────────────────────────── */
   .book-card {
     background: var(--cream); border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 6px 18px rgba(0,0,0,.40), 0 2px 4px rgba(0,0,0,.22);
     overflow: hidden; cursor: pointer;
     transition: transform .22s ease, box-shadow .22s ease;
     display: flex; flex-direction: column;
   }
-  .book-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow-md); }
+  .book-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 18px 36px rgba(0,0,0,.50), 0 4px 8px rgba(0,0,0,.28); }
   .book-cover {
     width: 100%; aspect-ratio: 2/3;
     object-fit: cover; display: block;
@@ -298,7 +316,7 @@
 
   <!-- Top nav -->
   <nav class="topnav">
-    <a class="topnav-brand" href="Main.html">✦ The Shelf</a>
+    <a class="topnav-brand" href="Main.html"><span style="color:#ffffff;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Live</span><span style="color:#f7e7b5;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Kitaab</span></a>
     <div class="topnav-links">
       <a href="Main.html">Library</a>
       <a href="Reader.html">Reader</a>
@@ -341,14 +359,30 @@
 <div class="modal-overlay" id="purchaseModal">
   <div class="modal">
     <h2 id="pm-title">Purchase Book</h2>
-    <p id="pm-desc"></p>
-    <button class="btn btn-primary" id="pm-buy" style="width:100%;margin-bottom:8px;">🛒 Buy Now</button>
+    <p id="pm-desc" style="margin-bottom:14px;"></p>
+
+    <!-- Step 1: Pay via UPI -->
+    <div id="pm-step1">
+      <p style="font-size:.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Step 1 — Pay</p>
+      <button class="btn btn-primary" id="pm-upi" style="width:100%;margin-bottom:6px;">
+        <span id="pm-upi-label">📲 Pay via UPI</span>
+      </button>
+      <p style="font-size:.72rem;color:var(--text-light);text-align:center;margin-bottom:12px;" id="pm-upi-hint"></p>
+    </div>
+
     <div class="modal-divider"></div>
-    <p style="font-size:.8rem;color:var(--text-mid);margin-bottom:8px;">Already purchased? Enter your Order ID:</p>
-    <input class="modal-input" id="pm-token" type="text" placeholder="Order ID / Transaction token">
+
+    <!-- Step 2: Enter book password -->
+    <div id="pm-step2">
+      <p style="font-size:.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Step 2 — Enter Book Password</p>
+      <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:10px;">After payment, you will receive a password. Enter it below to unlock the book.</p>
+      <input class="modal-input" id="pm-password" type="text" placeholder="Enter book password…" autocomplete="off">
+      <div id="pm-error" style="font-size:.78rem;color:#c0392b;margin-bottom:8px;display:none;padding:6px 10px;background:#fdf0ee;border-radius:6px;"></div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('purchaseModal')">Cancel</button>
-      <button class="btn btn-green" onclick="verifyPurchase()">✓ Verify &amp; Unlock</button>
+      <button class="btn btn-green" onclick="verifyPassword()">🔓 Unlock</button>
     </div>
   </div>
 </div>
@@ -373,17 +407,28 @@
 // ── Config ──────────────────────────────────────────────────
 const LIBRARY_URL = 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json';
 const API_URL     = 'https://web-production-a6ac9.up.railway.app';
-
-// ── Demo books (replace with fetch from LIBRARY_URL) ────────
+// ── Fallback books if library.json can't be fetched ──────────
 const DEMO_BOOKS = [
-  { id:'b001', title:'The Verdant Hollows', author:'Mira Ashwood', type:'novel',    price:149, cover:'', file:'sample.clbk', play_product_id:'com.shelf.b001' },
-  { id:'b002', title:'Letters from the Fog', author:'Dev Narayan', type:'novel',    price:0,   cover:'', file:'letters.clbk' },
-  { id:'b003', title:'Salt and Silence',     author:'Priya Menon', type:'novella',  price:89,  cover:'', file:'salt.lbk',  play_product_id:'com.shelf.b003' },
-  { id:'b004', title:'The Glass Oracle',     author:'Mira Ashwood',type:'novella',  price:0,   cover:'', file:'oracle.lbk' },
-  { id:'b005', title:'One Last Evening',     author:'R. Krishnan', type:'short_story', price:0, cover:'', file:'evening.lbk' },
-  { id:'b006', title:'The Cartographer',     author:'Dev Narayan', type:'short_story', price:49, cover:'', file:'cart.lbk', play_product_id:'com.shelf.b006' },
-  { id:'b007', title:'Beneath Monsoon Skies',author:'Priya Menon', type:'novel',    price:199, cover:'', file:'monsoon.clbk', play_product_id:'com.shelf.b007' },
-  { id:'b008', title:'A Quiet Wilderness',   author:'Mira Ashwood',type:'short_story',price:0, cover:'', file:'quiet.lbk' },
+  { id:'somoyer', title:'Somoyer Chabikathi', author:'Team Livekitaab', type:'novel', price:0,
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png',
+    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/Test.clbk' },
+  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap', author:'Panpriyo Nondi', type:'novella', price:30,
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png',
+    exe:'https://github.com/livekitaab/library/releases/download/Payer_chap/Ordhek.Payer.Chap.exe',
+    // upi_id: your UPI ID e.g. 'yourname@upi'  — set this in library.json
+    // password_hash: SHA-256 of the book password — generate at sha256.net
+    upi_id:'yourname@upi',
+    password_hash:'6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b' },
+  { id:'Ek_Muhurter_Sporsho', title:'Ek Muhurter Sporsho', author:'Shubhankar Babu', type:'short_story', price:10,
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png',
+    exe:'https://github.com/livekitaab/library/releases/download/Muhurter_Sporsho/Ek.Muhurter.Sporsho.exe',
+    upi_id:'yourname@upi',
+    password_hash:'6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b' },
+  { id:'Jontrer_Songsar', title:'Poripati Jontrer Songsar', author:'Shubhankar Babu', type:'short_story', price:10,
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png',
+    exe:'https://github.com/livekitaab/library/releases/download/JontrerSongsar/Jontrer.Sonsar.exe',
+    upi_id:'yourname@upi',
+    password_hash:'6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b' },
 ];
 
 // ── State ────────────────────────────────────────────────────
@@ -396,6 +441,29 @@ let ownedIds      = JSON.parse(localStorage.getItem('owned_ids') || '[]');
 let currentUser   = JSON.parse(localStorage.getItem('current_user') || 'null');
 
 // ── Boot ─────────────────────────────────────────────────────
+
+// ── Navigation helper ─────────────────────────────────────────
+// Auto-detects the base path so navigation works whether the site is at
+// https://user.github.io/ (root) or https://user.github.io/reponame/ (subfolder).
+const _basePath = (() => {
+  const p = window.location.pathname;
+  // Find the directory containing the current .html file
+  const dir = p.substring(0, p.lastIndexOf('/'));
+  return dir; // e.g. '' or '/the-shelf'
+})();
+function nav(page) {
+  window.location.href = _basePath + '/' + page;
+}
+function navHref(page) {
+  return _basePath + '/' + page;
+}
+// Rewrite all nav links once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[data-page]').forEach(a => {
+    a.href = navHref(a.dataset.page);
+  });
+});
+
 window.addEventListener('DOMContentLoaded', () => {
   loadLibrary();
 });
@@ -435,7 +503,11 @@ function renderLibrary() {
 function makeCard(book) {
   const owned    = ownedIds.includes(book.id);
   const isFree   = book.price === 0;
-  const canRead  = isFree || owned;
+  const hasLbk   = !!(book.file);          // has a readable .lbk/.clbk
+  const hasExe   = !!(book.exe);           // legacy desktop-only .exe
+  const canRead  = hasLbk && (isFree || owned);
+  const canBuyWeb = hasLbk && !isFree && !owned; // paid web book
+  const exeOnly  = hasExe && !hasLbk;     // old exe, no web reader
 
   const card = document.createElement('div');
   card.className = 'book-card';
@@ -475,14 +547,28 @@ function makeCard(book) {
     btn.className += ' btn-read';
     btn.innerHTML = '📖 Read';
     btn.onclick = () => openReader(book);
-  } else if (owned) {
+  } else if (owned && hasLbk) {
     btn.className += ' btn-owned';
-    btn.innerHTML = '✓ Owned';
+    btn.innerHTML = '✓ Read';
     btn.onclick = () => openReader(book);
-  } else {
+  } else if (canBuyWeb) {
     btn.className += ' btn-buy';
     btn.innerHTML = `🛒 Buy ₹${book.price}`;
     btn.onclick = () => showPurchaseModal(book);
+  } else if (exeOnly && isFree) {
+    btn.className += ' btn-read';
+    btn.innerHTML = '💾 Download';
+    btn.onclick = () => window.open(book.exe, '_blank');
+  } else if (exeOnly && !isFree) {
+    btn.className += ' btn-buy';
+    btn.innerHTML = `🛒 Buy ₹${book.price}`;
+    btn.onclick = () => showPurchaseModal(book);
+  } else {
+    btn.className += ' btn-owned';
+    btn.innerHTML = 'Coming Soon';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'default';
   }
   action.appendChild(btn);
 
@@ -513,57 +599,108 @@ function toggleFree() {
   renderLibrary();
 }
 
-// ── Purchase flow ─────────────────────────────────────────────
+// ── Purchase flow — UPI + book password ──────────────────────
 function showPurchaseModal(book) {
   pendingBook = book;
   document.getElementById('pm-title').textContent = book.title;
   document.getElementById('pm-desc').textContent =
-    `One-time purchase for ₹${book.price}. After payment, enter your Order ID below to unlock.`;
-  document.getElementById('pm-buy').onclick = () => {
-    // In production: link to your payment page or in-app billing
-    window.open(`${API_URL}/buy/${book.id}`, '_blank');
+    `₹${book.price} · one-time purchase`;
+
+  // Build UPI deep link
+  // Works on mobile: opens GPay / PhonePe / Paytm directly
+  // On desktop: shows the UPI ID to pay manually
+  const upiId   = book.upi_id || 'yourname@upi';
+  const amount  = book.price;
+  const note    = encodeURIComponent('Book: ' + book.title);
+  const name    = encodeURIComponent('Livekitaab');
+  const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
+
+  document.getElementById('pm-upi-label').textContent = `📲 Pay ₹${amount} via UPI`;
+  document.getElementById('pm-upi-hint').textContent  = `UPI ID: ${upiId}`;
+  document.getElementById('pm-upi').onclick = () => {
+    window.location.href = upiLink;   // opens UPI app on mobile
+    showToast('Opening UPI app… come back here after paying.');
   };
-  document.getElementById('pm-token').value = '';
+
+  document.getElementById('pm-password').value = '';
+  document.getElementById('pm-error').style.display = 'none';
   openModal('purchaseModal');
 }
 
-async function verifyPurchase() {
-  const token = document.getElementById('pm-token').value.trim();
-  if (!token) { showToast('Please enter your Order ID'); return; }
-  if (!currentUser) { window.location.href = 'account.html'; return; }
-  try {
-    const r = await fetch(`${API_URL}/api/check-purchase`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json',
-                 'Authorization': `Bearer ${currentUser.token}` },
-      body: JSON.stringify({ book_id: pendingBook.id, purchase_token: token }),
-    });
-    const j = await r.json();
-    if (j.purchased) {
-      ownedIds.push(pendingBook.id);
-      localStorage.setItem('owned_ids', JSON.stringify(ownedIds));
-      closeModal('purchaseModal');
-      showToast('✓ Purchase verified! Opening book…');
-      setTimeout(() => openReader(pendingBook), 900);
-      renderLibrary();
-    } else {
-      showToast('Token not verified — ' + (j.status || 'check your Order ID'));
-    }
-  } catch {
-    // Dev: just unlock anyway
-    ownedIds.push(pendingBook.id);
-    localStorage.setItem('owned_ids', JSON.stringify(ownedIds));
-    closeModal('purchaseModal');
-    showToast('✓ Unlocked (dev mode)');
-    setTimeout(() => openReader(pendingBook), 900);
-    renderLibrary();
+// SHA-256 using the browser's native SubtleCrypto — no library needed
+async function sha256(text) {
+  const buf  = await crypto.subtle.digest('SHA-256',
+    new TextEncoder().encode(text.trim().toLowerCase()));
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPassword() {
+  const input = document.getElementById('pm-password').value.trim();
+  const errEl = document.getElementById('pm-error');
+  errEl.style.display = 'none';
+
+  if (!input) {
+    errEl.textContent = 'Please enter the book password.';
+    errEl.style.display = 'block';
+    return;
   }
+
+  const hash    = await sha256(input);
+  const correct = pendingBook.password_hash;
+
+  if (!correct) {
+    // No hash set — dev/fallback: unlock directly
+    unlockBook(pendingBook);
+    return;
+  }
+
+  if (hash === correct) {
+    unlockBook(pendingBook);
+  } else {
+    errEl.textContent = 'Incorrect password. Please check and try again.';
+    errEl.style.display = 'block';
+    document.getElementById('pm-password').focus();
+  }
+}
+
+function unlockBook(book) {
+  if (!ownedIds.includes(book.id)) {
+    ownedIds.push(book.id);
+    localStorage.setItem('owned_ids', JSON.stringify(ownedIds));
+  }
+  closeModal('purchaseModal');
+  showToast('✓ Unlocked! Opening book…');
+  renderLibrary();
+  setTimeout(() => openReader(book), 900);
+}
+
+// ── CORS Proxy (must match reader.html) ───────────────────────
+const CORS_PROXY = 'https://your-proxy.YOUR-SUBDOMAIN.workers.dev';
+
+// ── URL normaliser ────────────────────────────────────────────
+function normaliseLbkUrl(url) {
+  if (!url) return url;
+  if (/raw\.githubusercontent\.com/i.test(url)) return url;
+  const blobMatch = url.match(/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/i);
+  if (blobMatch) {
+    const [,user,repo,branch,path] = blobMatch;
+    return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+  }
+  if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
+    const proxyReady = CORS_PROXY && !CORS_PROXY.includes('YOUR-SUBDOMAIN');
+    return proxyReady ? `${CORS_PROXY}?url=${encodeURIComponent(url)}` : url;
+  }
+  return url;
 }
 
 // ── Open reader ───────────────────────────────────────────────
 function openReader(book) {
-  sessionStorage.setItem('pending_book', JSON.stringify(book));
-  window.location.href = 'Reader.html';
+  // Normalise file URL before handing to reader
+  const normalised = normaliseLbkUrl(book.file || '');
+  const bookToPass = { ...book, file: normalised || book.file }; // keep original if normalised is null
+  sessionStorage.setItem('pending_book', JSON.stringify(bookToPass));
+  nav('reader.html');
 }
 
 // ── Modal helpers ─────────────────────────────────────────────
