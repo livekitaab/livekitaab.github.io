@@ -280,11 +280,11 @@
 
   <!-- Top nav -->
   <nav class="topnav">
-    <a class="topnav-brand" href="library.html">✦ The Shelf</a>
+    <a class="topnav-brand" href="#" data-page="library.html">✦ The Shelf</a>
     <div class="topnav-links">
-      <a href="Main.html">Library</a>
-      <a href="Reader.html">Reader</a>
-      <a class="active" href="Account.html">Account</a>
+      <a href="#" data-page="library.html">Library</a>
+      <a href="#" data-page="reader.html">Reader</a>
+      <a class="active" href="#" data-page="account.html">Account</a>
     </div>
   </nav>
 
@@ -313,7 +313,7 @@
             <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
           </div>
           <div class="form-error" id="login-error"></div>
-          <button class="btn-full btn-submit" onclick="handleLogin()">Sign In →</button>
+          <button class="btn-full btn-submit" id="login-btn" onclick="handleLogin()">Sign In →</button>
           <p class="form-footer">Forgot password? <a href="#" style="color:var(--brown);text-decoration:none;" onclick="showForgot()">Reset it</a></p>
         </div>
 
@@ -336,7 +336,7 @@
             <input class="form-input" id="reg-pass2" type="password" placeholder="Repeat password" autocomplete="new-password">
           </div>
           <div class="form-error" id="reg-error"></div>
-          <button class="btn-full btn-submit" onclick="handleRegister()">Create Account →</button>
+          <button class="btn-full btn-submit" id="reg-btn" onclick="handleRegister()">Create Account →</button>
           <p class="form-footer">By registering you agree to our Terms &amp; Privacy Policy.</p>
         </div>
       </div>
@@ -409,43 +409,135 @@
 </div><!-- #app -->
 <div id="toast"></div>
 
+<!-- Firebase SDK (v10 modular — loaded as compat for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
-// ── Config ───────────────────────────────────────────────────
-const API_URL = 'https://your-backend.com';
+// ══════════════════════════════════════════════════════════════
+//  STEP 1 — Paste your Firebase config here.
+//  Get it from: Firebase Console → Project Settings → Your Apps
+//  It looks exactly like the object below.
+// ══════════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAOUx2hi5LMebUVc_vlGQ_QEkBeMjQaaMo",
+  authDomain: "livekitaab.firebaseapp.com",
+  projectId: "livekitaab",
+  storageBucket: "livekitaab.firebasestorage.app",
+  messagingSenderId: "387850236053",
+  appId: "1:387850236053:web:babf8596ac3841aeddeb9c",
+  measurementId: "G-1RY50RP54G"
+};
 
-// ── Local state ───────────────────────────────────────────────
-let currentUser = JSON.parse(localStorage.getItem('current_user') || 'null');
-let ownedIds    = JSON.parse(localStorage.getItem('owned_ids')    || '[]');
+// ── Init Firebase ────────────────────────────────────────────
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
 
-// ── Boot ─────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  if (currentUser) showProfile();
-  else             showAuth();
+// ── Navigation helper ────────────────────────────────────────
+const _basePath = (() => {
+  const p = window.location.pathname;
+  return p.substring(0, p.lastIndexOf('/'));
+})();
+function nav(page) { window.location.href = _basePath + '/' + page; }
+function navHref(page) { return _basePath + '/' + page; }
+
+// ── State ────────────────────────────────────────────────────
+// ownedIds lives in localStorage so it works even when logged out.
+// On login we also sync to/from Firestore so it follows the user.
+let ownedIds = JSON.parse(localStorage.getItem('owned_ids') || '[]');
+
+// ── Boot — Firebase tells us auth state, we don't guess ──────
+document.addEventListener('DOMContentLoaded', () => {
+  // Rewrite nav links
+  document.querySelectorAll('a[data-page]').forEach(a => {
+    a.href = navHref(a.dataset.page);
+  });
+
+  // Show spinner while Firebase resolves auth state
+  document.getElementById('authView').style.display    = 'none';
+  document.getElementById('profileView').style.display = 'none';
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      showProfile(user);
+    } else {
+      showAuth();
+    }
+  });
 });
 
+// ── Show / hide views ────────────────────────────────────────
 function showAuth() {
-  document.getElementById('authView').style.display = 'block';
+  document.getElementById('authView').style.display    = 'block';
   document.getElementById('profileView').style.display = 'none';
 }
 
-function showProfile() {
-  document.getElementById('authView').style.display = 'none';
+async function showProfile(user) {
+  document.getElementById('authView').style.display    = 'none';
   document.getElementById('profileView').style.display = 'block';
 
-  const name = currentUser.name || 'Reader';
-  document.getElementById('profileName').textContent   = name;
-  document.getElementById('profileEmail').textContent  = currentUser.email || '';
-  document.getElementById('settingEmail').textContent  = currentUser.email || '';
+  // Display name: Firestore profile takes priority over Firebase Auth displayName
+  const profile = await loadFirestoreProfile(user);
+  const name    = profile?.name || user.displayName || nameFromEmail(user.email);
+  const joined  = user.metadata.creationTime;
+
+  document.getElementById('profileName').textContent    = name;
+  document.getElementById('profileEmail').textContent   = user.email;
+  document.getElementById('settingEmail').textContent   = user.email;
   document.getElementById('avatarInitials').textContent = name.charAt(0).toUpperCase();
-  if (currentUser.joined) {
+  if (joined) {
     document.getElementById('profileJoined').textContent =
-      'Member since ' + new Date(currentUser.joined).toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+      'Member since ' + new Date(joined).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  }
+
+  // Sync owned IDs from Firestore → localStorage
+  if (profile?.owned_ids?.length) {
+    const merged = [...new Set([...ownedIds, ...profile.owned_ids])];
+    ownedIds = merged;
+    localStorage.setItem('owned_ids', JSON.stringify(merged));
   }
 
   loadOwnedBooks();
 }
 
-// ── Auth tab ─────────────────────────────────────────────────
+// ── Firestore: load user profile doc ────────────────────────
+async function loadFirestoreProfile(user) {
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    return doc.exists ? doc.data() : null;
+  } catch { return null; }
+}
+
+// ── Firestore: save / merge user profile ────────────────────
+async function saveFirestoreProfile(user, name) {
+  try {
+    await db.collection('users').doc(user.uid).set({
+      name,
+      email:     user.email,
+      owned_ids: ownedIds,
+      updated:   firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+  } catch (e) { console.warn('Firestore write failed:', e); }
+}
+
+// ── Firestore: push a newly unlocked book ID ─────────────────
+// Called from library.html after password verification succeeds.
+// We expose it on window so library.html can call it cross-page
+// via sessionStorage signalling (see library.html unlockBook).
+async function pushOwnedToFirestore(bookId) {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await db.collection('users').doc(user.uid).set({
+      owned_ids: firebase.firestore.FieldValue.arrayUnion(bookId),
+      updated:   firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+  } catch (e) { console.warn('Firestore sync failed:', e); }
+}
+
+// ── Auth tab switch ──────────────────────────────────────────
 function switchAuthTab(key, el) {
   document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -454,31 +546,22 @@ function switchAuthTab(key, el) {
   clearErrors();
 }
 
-// ── Login ────────────────────────────────────────────────────
+// ── Sign In ──────────────────────────────────────────────────
 async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   if (!email || !pass) { showError('login-error', 'Please fill all fields.'); return; }
   clearErrors();
+  setLoading('login-btn', true);
 
   try {
-    const r = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass }),
-    });
-    const j = await r.json();
-    if (!r.ok) { showError('login-error', j.message || 'Login failed.'); return; }
-    saveUser(j.user, j.token);
-    syncOwned(j.user.owned_ids || []);
-    showToast('Welcome back, ' + (j.user.name || 'Reader') + '!');
-    setTimeout(showProfile, 600);
-  } catch {
-    // Dev fallback: mock login
-    const mockUser = { name: nameFromEmail(email), email, joined: new Date().toISOString(), token: 'dev-token-' + Date.now() };
-    saveUser(mockUser, mockUser.token);
-    showToast('Signed in (dev mode)');
-    setTimeout(showProfile, 600);
+    await auth.signInWithEmailAndPassword(email, pass);
+    // onAuthStateChanged fires → showProfile() called automatically
+    showToast('Welcome back!');
+  } catch (e) {
+    showError('login-error', firebaseErrorMessage(e));
+  } finally {
+    setLoading('login-btn', false);
   }
 }
 
@@ -492,60 +575,78 @@ async function handleRegister() {
   if (pass !== pass2)           { showError('reg-error', 'Passwords do not match.'); return; }
   if (pass.length < 8)          { showError('reg-error', 'Password must be at least 8 characters.'); return; }
   clearErrors();
+  setLoading('reg-btn', true);
 
   try {
-    const r = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password: pass }),
-    });
-    const j = await r.json();
-    if (!r.ok) { showError('reg-error', j.message || 'Registration failed.'); return; }
-    saveUser(j.user, j.token);
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    // Set display name in Firebase Auth
+    await cred.user.updateProfile({ displayName: name });
+    // Save full profile to Firestore
+    await saveFirestoreProfile(cred.user, name);
     showToast('Account created! Welcome, ' + name + '!');
-    setTimeout(showProfile, 600);
-  } catch {
-    // Dev fallback: mock register
-    const mockUser = { name, email, joined: new Date().toISOString(), token: 'dev-token-' + Date.now() };
-    saveUser(mockUser, mockUser.token);
-    showToast('Account created (dev mode)');
-    setTimeout(showProfile, 600);
+    // onAuthStateChanged fires → showProfile() called automatically
+  } catch (e) {
+    showError('reg-error', firebaseErrorMessage(e));
+  } finally {
+    setLoading('reg-btn', false);
   }
 }
 
-// ── Save session ──────────────────────────────────────────────
-function saveUser(user, token) {
-  currentUser = { ...user, token };
-  localStorage.setItem('current_user', JSON.stringify(currentUser));
-}
-
-function syncOwned(ids) {
-  const merged = [...new Set([...ownedIds, ...ids])];
-  ownedIds = merged;
-  localStorage.setItem('owned_ids', JSON.stringify(merged));
-}
-
-// ── Load owned books ──────────────────────────────────────────
-async function loadOwnedBooks() {
-  let books = [];
+// ── Password reset ────────────────────────────────────────────
+async function showForgot() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) {
+    showError('login-error', 'Enter your email above first, then click Reset.');
+    return;
+  }
   try {
-    const r = await fetch(`${API_URL}/api/user/books`, {
-      headers: { 'Authorization': `Bearer ${currentUser.token}` }
-    });
+    await auth.sendPasswordResetEmail(email);
+    showToast('Reset email sent — check your inbox.');
+  } catch (e) {
+    showError('login-error', firebaseErrorMessage(e));
+  }
+}
+
+// ── Change password ───────────────────────────────────────────
+async function showChangePassword() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await auth.sendPasswordResetEmail(user.email);
+    showToast('Password reset email sent to ' + user.email);
+  } catch (e) {
+    showToast('Could not send reset email: ' + e.message);
+  }
+}
+
+// ── Sign out ──────────────────────────────────────────────────
+async function signOut() {
+  await auth.signOut();
+  showToast('Signed out. See you soon!');
+  // onAuthStateChanged fires → showAuth() called automatically
+}
+
+// ── Load + render owned books ─────────────────────────────────
+// Reads from localStorage (populated when books are unlocked in library.html)
+// then also fetches the library.json to get full book metadata for display.
+async function loadOwnedBooks() {
+  let allBooks = [];
+  try {
+    const LIBRARY_URL = 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json';
+    const r = await fetch(LIBRARY_URL);
     const j = await r.json();
-    books = j.books || [];
-    syncOwned(books.map(b => b.id));
+    allBooks = j.books || [];
+    // Cache for offline use
+    sessionStorage.setItem('library_cache', JSON.stringify(j));
   } catch {
-    // Build from localStorage
-    const libJson = sessionStorage.getItem('library_cache');
-    if (libJson) {
-      const all = JSON.parse(libJson).books || [];
-      books = all.filter(b => ownedIds.includes(b.id));
-    }
+    const cached = sessionStorage.getItem('library_cache');
+    if (cached) allBooks = JSON.parse(cached).books || [];
   }
 
-  renderOwnedBooks(books);
-  updateStats(books);
+  const owned = allBooks.filter(b => ownedIds.includes(b.id));
+  const free  = allBooks.filter(b => b.price === 0);
+  renderOwnedBooks(owned);
+  updateStats(owned, free);
 }
 
 function renderOwnedBooks(books) {
@@ -562,16 +663,15 @@ function renderOwnedBooks(books) {
       <div class="owned-thumb">📕</div>
       <div class="owned-info">
         <div class="owned-title">${escHtml(book.title)}</div>
-        <div class="owned-meta">${escHtml(book.author || '')} · ${book.type || ''}</div>
+        <div class="owned-meta">${escHtml(book.author || '')} · ${escHtml(book.type || '')}</div>
       </div>
       <button class="owned-read-btn" onclick='openBook(${JSON.stringify(book)})'>Read →</button>`;
     list.appendChild(item);
   });
 }
 
-function updateStats(books) {
-  const paid = books.filter(b => b.price > 0);
-  const free = books.filter(b => b.price === 0);
+function updateStats(owned, free) {
+  const paid  = owned.filter(b => b.price > 0);
   const spent = paid.reduce((s, b) => s + (b.price || 0), 0);
   document.getElementById('statOwned').textContent = paid.length;
   document.getElementById('statFree').textContent  = free.length;
@@ -580,39 +680,43 @@ function updateStats(books) {
 
 function openBook(book) {
   sessionStorage.setItem('pending_book', JSON.stringify(book));
-  window.location.href = 'reader.html';
+  nav('reader.html');
 }
 
-// ── Sign out ──────────────────────────────────────────────────
-function signOut() {
-  localStorage.removeItem('current_user');
-  currentUser = null;
-  showToast('Signed out. See you soon!');
-  setTimeout(showAuth, 800);
-}
-
-// ── Clear data ────────────────────────────────────────────────
+// ── Clear local data ──────────────────────────────────────────
 function clearData() {
-  if (!confirm('Clear all local reading data? Purchases are safe on the server.')) return;
+  if (!confirm('Clear local reading data? This only affects this device — your account is safe.')) return;
   localStorage.removeItem('owned_ids');
   ownedIds = [];
   showToast('Local data cleared.');
   loadOwnedBooks();
 }
 
-// ── Change password (stub) ────────────────────────────────────
-function showChangePassword() {
-  showToast('Password change — coming soon!');
-}
-
-// ── Forgot password (stub) ────────────────────────────────────
-function showForgot() {
-  showToast('Password reset — coming soon!');
+// ── Firebase error → human readable ──────────────────────────
+function firebaseErrorMessage(e) {
+  const map = {
+    'auth/user-not-found':       'No account found with that email.',
+    'auth/wrong-password':       'Incorrect password.',
+    'auth/email-already-in-use': 'An account with that email already exists.',
+    'auth/weak-password':        'Password must be at least 6 characters.',
+    'auth/invalid-email':        'Please enter a valid email address.',
+    'auth/too-many-requests':    'Too many attempts. Please wait a moment.',
+    'auth/network-request-failed': 'Network error — check your connection.',
+    'auth/invalid-credential':   'Incorrect email or password.',
+  };
+  return map[e.code] || e.message;
 }
 
 // ── Helpers ───────────────────────────────────────────────────
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.style.opacity = loading ? '0.6' : '1';
+}
 function showError(id, msg) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = msg; el.classList.add('show');
 }
 function clearErrors() {
@@ -625,7 +729,6 @@ function nameFromEmail(email) {
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
