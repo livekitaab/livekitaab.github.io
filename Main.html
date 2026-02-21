@@ -675,7 +675,7 @@ function unlockBook(book) {
   setTimeout(() => openReader(book), 900);
 }
 
-// ── CORS Proxy (must match reader.html) ───────────────────────
+// ── CORS Proxy (must match Reader.html) ───────────────────────
 const CORS_PROXY = 'https://your-proxy.YOUR-SUBDOMAIN.workers.dev';
 
 // ── URL normaliser ────────────────────────────────────────────
@@ -700,7 +700,7 @@ function openReader(book) {
   const normalised = normaliseLbkUrl(book.file || '');
   const bookToPass = { ...book, file: normalised || book.file }; // keep original if normalised is null
   sessionStorage.setItem('pending_book', JSON.stringify(bookToPass));
-  nav('reader.html');
+  nav('Reader.html');
 }
 
 // ── Modal helpers ─────────────────────────────────────────────
