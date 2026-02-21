@@ -702,7 +702,7 @@ function resolveUrl(url) {
   return null; // local / relative path
 }
 
-// ── Load from sessionStorage (set by library.html) ───────────
+// ── Load from sessionStorage (set by Main.html) ───────────
 
 // ── Navigation helper ─────────────────────────────────────────
 // Auto-detects the base path so navigation works whether the site is at
@@ -783,7 +783,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── UI controls ──────────────────────────────────────────────
-function goBack() { nav('library.html'); }
+function goBack() { nav('Main.html'); }
 
 function toggleDrawer() {
   const d = document.getElementById('chapterDrawer');
