@@ -23,19 +23,19 @@
     --text-dark:   #2a1a0e;
     --text-mid:    #5c3d1e;
     --text-light:  #8c6a45;
-    --shadow-sm:   0 2px 8px rgba(58,28,8,.10);
     --shadow-md:   0 4px 20px rgba(58,28,8,.14);
     --shadow-lg:   0 8px 40px rgba(58,28,8,.22);
     --radius:      12px;
     --radius-sm:   8px;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; }
   body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--text-dark); min-height:100vh; overflow-x:hidden; }
-  body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); }
+  body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); }
   #app { position:relative; z-index:1; display:flex; flex-direction:column; min-height:100vh; }
 
-  /* ── Nav ── */
+  /* Nav */
   .topnav { background:var(--brown-dark); padding:0 24px; height:52px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,.35); position:sticky; top:0; z-index:100; }
   .topnav-brand { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--gold); letter-spacing:.02em; text-decoration:none; }
   .topnav-links { display:flex; gap:6px; align-items:center; }
@@ -44,14 +44,14 @@
   .topnav-links .btn-account { background:var(--green); color:var(--brown-dark); font-weight:500; padding:5px 16px; }
   .topnav-links .btn-account:hover { background:var(--green-light); }
 
-  /* ── Banner ── */
+  /* Banner */
   .banner { background:linear-gradient(120deg,var(--green) 0%,var(--green-light) 55%,var(--gold-deep) 100%); padding:36px 32px 32px; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden; }
   .banner::after { content:'📚'; position:absolute; right:-10px; bottom:-18px; font-size:110px; opacity:.10; pointer-events:none; transform:rotate(-8deg); }
   .banner-icon { font-size:2.6rem; flex-shrink:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.15)); }
   .banner-text h1 { font-family:'Playfair Display',serif; font-size:clamp(1.5rem,4vw,2rem); font-weight:900; color:var(--brown-dark); line-height:1.15; }
   .banner-text p { font-family:'Lora',serif; font-style:italic; color:var(--brown-deep); font-size:.9rem; margin-top:5px; }
 
-  /* ── Filter bar ── */
+  /* Filter */
   .filter-bar { background:var(--cream-dark); border-bottom:1.5px solid var(--cream-deeper); padding:10px 20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .filter-label { font-size:.78rem; font-weight:500; color:var(--text-light); text-transform:uppercase; letter-spacing:.08em; margin-right:4px; }
   .chip { display:inline-flex; align-items:center; gap:5px; padding:4px 14px; border-radius:20px; font-size:.8rem; cursor:pointer; transition:all .2s; border:1.5px solid var(--brown); color:var(--brown); background:transparent; font-family:'DM Sans',sans-serif; white-space:nowrap; }
@@ -60,13 +60,13 @@
   .filter-spacer { flex:1; }
   #statusText { font-size:.78rem; color:var(--text-light); font-style:italic; }
 
-  /* ── Tab strip ── */
+  /* Tabs */
   .tab-strip { display:flex; background:var(--brown-dark); border-bottom:2px solid rgba(164,102,54,.35); position:sticky; top:52px; z-index:90; }
   .tab-btn { flex:1; padding:13px 8px; text-align:center; font-family:'DM Sans',sans-serif; font-size:.84rem; font-weight:500; color:rgba(246,233,215,.55); cursor:pointer; border:none; background:transparent; transition:all .2s; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
   .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold-deep); }
   .tab-btn:hover:not(.active) { color:var(--cream); background:rgba(246,233,215,.06); }
 
-  /* ── Shelf panels ── */
+  /* Shelf */
   .tab-panel { display:none; padding:28px 16px 80px; animation:fadeIn .2s ease;
     background: repeating-linear-gradient(180deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 17px,rgba(0,0,0,.05) 17px,rgba(0,0,0,.05) 18px,rgba(255,255,255,.03) 18px,rgba(255,255,255,.03) 19px,rgba(0,0,0,0) 19px,rgba(0,0,0,0) 36px),
     linear-gradient(172deg,#5c2e10 0%,#7a4422 20%,#a46636 40%,#8b5530 58%,#7a4422 75%,#5c2e10 100%);
@@ -74,16 +74,16 @@
   .tab-panel.active { display:block; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-  /* ── Book grid ── */
+  /* Grid */
   .book-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:18px; }
   .empty-state { text-align:center; padding:60px 20px; color:var(--gold); font-family:'Lora',serif; font-style:italic; font-size:1rem; text-shadow:0 1px 3px rgba(0,0,0,.4); }
   .empty-state span { display:block; font-size:2.5rem; margin-bottom:12px; }
 
-  /* ── Book card ── */
+  /* Card */
   .book-card { background:var(--cream); border-radius:var(--radius); box-shadow:0 6px 18px rgba(0,0,0,.40),0 2px 4px rgba(0,0,0,.22); overflow:hidden; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease; display:flex; flex-direction:column; }
   .book-card:hover { transform:translateY(-8px) scale(1.02); box-shadow:0 18px 36px rgba(0,0,0,.50),0 4px 8px rgba(0,0,0,.28); }
-  .book-cover { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; background:linear-gradient(135deg,var(--brown) 0%,var(--brown-deep) 100%); }
   .cover-wrap { position:relative; }
+  .book-cover { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; }
   .book-cover-placeholder { width:100%; aspect-ratio:2/3; background:linear-gradient(135deg,var(--brown) 0%,var(--brown-deep) 100%); display:flex; align-items:center; justify-content:center; font-size:2.4rem; color:var(--gold); opacity:.7; }
   .book-badge { position:absolute; top:8px; right:8px; padding:2px 8px; border-radius:10px; font-size:.65rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
   .badge-free { background:var(--green); color:var(--brown-dark); }
@@ -92,100 +92,90 @@
   .book-title { font-family:'Playfair Display',serif; font-size:.88rem; font-weight:600; color:var(--text-dark); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .book-author { font-family:'Lora',serif; font-style:italic; font-size:.72rem; color:var(--text-light); margin-top:3px; }
   .book-action { padding:8px 10px 10px; }
-  .btn { width:100%; padding:7px; border:none; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:500; cursor:pointer; transition:all .18s; display:flex; align-items:center; justify-content:center; gap:5px; text-decoration:none; }
+  .btn { width:100%; padding:7px; border:none; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:500; cursor:pointer; transition:all .18s; display:flex; align-items:center; justify-content:center; gap:5px; }
   .btn-read { background:var(--green); color:var(--brown-dark); }
   .btn-read:hover { background:var(--green-dark); color:white; }
   .btn-buy { background:var(--brown); color:var(--cream); }
   .btn-buy:hover { background:var(--brown-deep); }
-  .btn-owned { background:var(--cream-dark); color:var(--text-mid); border:1.5px solid var(--cream-deeper); }
+  .btn-muted { background:var(--cream-dark); color:var(--text-mid); border:1.5px solid var(--cream-deeper); }
 
-  /* ── Modal ── */
-  .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(42,26,14,.60); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:16px; opacity:0; pointer-events:none; transition:opacity .22s; }
+  /* Modal */
+  .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(42,26,14,.62); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:16px; opacity:0; pointer-events:none; transition:opacity .22s; }
   .modal-overlay.open { opacity:1; pointer-events:all; }
-  .modal { background:var(--cream); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:26px 22px; width:100%; max-width:420px; transform:translateY(18px) scale(.98); transition:transform .22s ease; max-height:94vh; overflow-y:auto; }
+  .modal { background:var(--cream); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:24px 22px; width:100%; max-width:420px; transform:translateY(16px) scale(.98); transition:transform .22s ease; max-height:94vh; overflow-y:auto; }
   .modal-overlay.open .modal { transform:translateY(0) scale(1); }
-  .modal h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-dark); margin-bottom:3px; }
-  .modal-sub { font-size:.8rem; color:var(--text-light); margin-bottom:0; }
-  .modal-divider { height:1px; background:var(--cream-deeper); margin:14px 0; }
+  .modal-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-dark); margin-bottom:2px; }
+  .modal-sub { font-size:.78rem; color:var(--text-light); }
   .modal-actions { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; margin-top:14px; }
   .modal-actions .btn { width:auto; padding:8px 18px; font-size:.8rem; }
   .btn-ghost { background:transparent; color:var(--text-light); border:1.5px solid var(--cream-deeper); }
   .btn-ghost:hover { background:var(--cream-dark); }
   .btn-green { background:var(--green); color:var(--brown-dark); font-weight:600; }
   .btn-green:hover { background:var(--green-dark); color:white; }
-  .btn-brown { background:var(--brown); color:var(--cream); }
-  .btn-brown:hover { background:var(--brown-deep); }
-  .modal-input { width:100%; padding:9px 12px; border-radius:var(--radius-sm); border:1.5px solid var(--cream-deeper); background:white; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--text-dark); outline:none; transition:border-color .18s; margin-bottom:8px; }
-  .modal-input:focus { border-color:var(--green); }
-  .modal-input::placeholder { color:var(--text-light); }
+  .btn-gold { background:var(--gold-deep); color:var(--brown-dark); font-weight:600; }
+  .btn-gold:hover { filter:brightness(1.08); }
+  .field { width:100%; padding:9px 12px; border-radius:var(--radius-sm); border:1.5px solid var(--cream-deeper); background:white; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--text-dark); outline:none; transition:border-color .18s; margin-bottom:8px; }
+  .field:focus { border-color:var(--green); }
+  .field::placeholder { color:var(--text-light); }
+  .divider { height:1px; background:var(--cream-deeper); margin:14px 0; }
 
-  /* ── Step indicator ── */
-  .steps-row { display:flex; align-items:center; margin:14px 0 16px; }
-  .step-dot { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; flex-shrink:0; transition:all .3s; background:var(--cream-deeper); color:var(--text-light); }
-  .step-dot.active { background:var(--brown); color:white; box-shadow:0 0 0 3px rgba(164,102,54,.2); }
-  .step-dot.done { background:var(--green); color:var(--brown-dark); }
-  .step-line { flex:1; height:2px; background:var(--cream-deeper); transition:background .3s; }
-  .step-line.done { background:var(--green); }
-  .step-label { font-size:.65rem; text-align:center; margin-top:4px; color:var(--text-light); white-space:nowrap; }
-  .step-col { display:flex; flex-direction:column; align-items:center; }
+  /* Step bar */
+  .steps { display:flex; align-items:center; margin:14px 0 16px; }
+  .sdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; flex-shrink:0; transition:all .25s; background:var(--cream-deeper); color:var(--text-light); }
+  .sdot.on  { background:var(--brown); color:white; box-shadow:0 0 0 3px rgba(164,102,54,.2); }
+  .sdot.ok  { background:var(--green); color:var(--brown-dark); }
+  .sline { flex:1; height:2px; background:var(--cream-deeper); transition:background .25s; }
+  .sline.ok { background:var(--green); }
+  .scol { display:flex; flex-direction:column; align-items:center; }
+  .slabel { font-size:.62rem; color:var(--text-light); margin-top:3px; white-space:nowrap; }
 
-  /* ── QR box ── */
+  /* QR box */
   .qr-box { background:white; border-radius:var(--radius); border:2px solid var(--cream-deeper); padding:16px; text-align:center; margin-bottom:10px; }
-  .qr-label { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-light); font-weight:600; margin-bottom:10px; }
+  .qr-eyebrow { font-size:.67rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-light); font-weight:600; margin-bottom:10px; }
   #qrcode { display:inline-block; line-height:0; border-radius:6px; overflow:hidden; }
-  #qrcode canvas, #qrcode img { display:block; border-radius:4px; }
-  .qr-amount-pill { display:inline-block; margin-top:10px; background:var(--gold); color:var(--brown-dark); font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; padding:4px 20px; border-radius:20px; border:1.5px solid var(--gold-deep); }
-  .qr-upi-row { margin-top:7px; display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; }
-  .qr-upi-chip { font-size:.7rem; font-family:monospace; background:var(--cream-dark); color:var(--text-mid); padding:3px 10px; border-radius:6px; }
+  #qrcode canvas, #qrcode img { display:block; }
+  .amount-pill { display:inline-block; margin-top:10px; background:var(--gold); color:var(--brown-dark); font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; padding:4px 20px; border-radius:20px; border:1.5px solid var(--gold-deep); }
+  .upi-row { margin-top:7px; display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; }
+  .upi-chip { font-size:.7rem; font-family:monospace; background:var(--cream-dark); color:var(--text-mid); padding:3px 10px; border-radius:6px; }
   .copy-btn { font-size:.67rem; padding:3px 9px; border-radius:6px; border:1px solid var(--cream-deeper); background:white; color:var(--text-mid); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
   .copy-btn:hover { background:var(--cream-dark); }
-  .qr-apps { display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
-  .qr-app { font-size:.65rem; padding:2px 8px; border-radius:8px; background:var(--cream-dark); color:var(--text-mid); border:1px solid var(--cream-deeper); }
+  .app-chips { display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
+  .app-chip { font-size:.63rem; padding:2px 8px; border-radius:8px; background:var(--cream-dark); color:var(--text-mid); border:1px solid var(--cream-deeper); }
 
-  /* ── Same-phone pay button ── */
-  .pay-phone-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:11px; border-radius:var(--radius-sm); background:linear-gradient(135deg,#2d6a4f,#3d7a56); color:white; font-family:'DM Sans',sans-serif; font-size:.84rem; font-weight:600; text-decoration:none; margin-top:8px; border:none; cursor:pointer; transition:all .2s; box-shadow:0 3px 10px rgba(61,122,86,.35); }
-  .pay-phone-btn:hover { background:linear-gradient(135deg,#1e4d38,#2d6a4f); box-shadow:0 5px 16px rgba(61,122,86,.45); transform:translateY(-1px); }
-  .or-divider { display:flex; align-items:center; gap:8px; margin:10px 0; font-size:.7rem; color:var(--text-light); }
-  .or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background:var(--cream-deeper); }
+  /* Info box styles */
+  .info-box { border-radius:var(--radius-sm); padding:13px; margin-bottom:10px; }
+  .info-box.green { background:rgba(107,191,142,.10); border:1.5px solid rgba(107,191,142,.35); }
+  .info-box.gold  { background:rgba(212,168,83,.10);  border:1.5px solid rgba(212,168,83,.38); }
+  .ibox-title { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
+  .ibox-title.green { color:var(--green-dark); }
+  .ibox-title.gold  { color:#a07820; }
+  .ibox-body  { font-size:.75rem; color:var(--text-mid); line-height:1.6; }
+  .ibox-body strong { color:var(--text-dark); }
+  .ibox-where { font-size:.69rem; color:var(--text-light); background:var(--cream-dark); border-radius:6px; padding:7px 10px; line-height:1.7; margin-top:8px; }
 
-  /* ── UTR step ── */
-  .utr-box { background:linear-gradient(135deg,rgba(107,191,142,.10),rgba(107,191,142,.04)); border:1.5px solid rgba(107,191,142,.35); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
-  .utr-box-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--green-dark); margin-bottom:8px; display:flex; align-items:center; gap:5px; }
-  .utr-help { font-size:.74rem; color:var(--text-mid); line-height:1.55; margin-bottom:10px; }
-  .utr-help strong { color:var(--text-dark); }
-  .utr-where { font-size:.7rem; color:var(--text-light); background:var(--cream-dark); border-radius:6px; padding:7px 10px; line-height:1.6; margin-bottom:10px; }
+  /* Author link */
+  .author-toggle { font-size:.7rem; color:var(--text-light); text-align:center; margin-top:10px; cursor:pointer; text-decoration:underline dotted var(--cream-deeper); transition:color .15s; user-select:none; }
+  .author-toggle:hover { color:var(--brown); }
 
-  /* ── Author passkey link ── */
-  .author-link { font-size:.7rem; color:var(--text-light); text-align:center; margin-top:10px; cursor:pointer; text-decoration:underline dotted; transition:color .15s; }
-  .author-link:hover { color:var(--brown); }
+  /* Spinner */
+  .spinner-wrap { text-align:center; padding:28px 0; }
+  .spinner { width:34px; height:34px; border:3px solid var(--cream-deeper); border-top-color:var(--green); border-radius:50%; animation:spin .75s linear infinite; margin:0 auto 12px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .spinner-label { font-size:.82rem; color:var(--text-mid); }
 
-  /* ── Author passkey panel ── */
-  .author-box { background:linear-gradient(135deg,rgba(212,168,83,.12),rgba(212,168,83,.04)); border:1.5px solid rgba(212,168,83,.4); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
-  .author-box-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--gold-deep); margin-bottom:6px; }
-
-  /* ── Verifying spinner ── */
-  .verify-state { text-align:center; padding:24px 0; }
-  .spinner { width:36px; height:36px; border:3px solid var(--cream-deeper); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .verify-text { font-size:.85rem; color:var(--text-mid); }
-
-  /* ── Success state ── */
-  .success-state { text-align:center; padding:20px 0 10px; }
-  .success-icon { font-size:3rem; margin-bottom:10px; animation:pop .4s ease; }
+  /* Success */
+  .success-wrap { text-align:center; padding:18px 0 8px; }
+  .success-emoji { font-size:3rem; animation:pop .35s ease; margin-bottom:8px; }
   @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.15)} 100%{transform:scale(1)} }
-  .success-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-dark); margin-bottom:5px; }
-  .success-sub { font-size:.78rem; color:var(--text-light); }
+  .success-title { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text-dark); }
+  .success-sub   { font-size:.76rem; color:var(--text-light); margin-top:4px; }
 
-  /* ── Error box ── */
-  .err-box { font-size:.76rem; color:#b03a2e; padding:7px 12px; background:#fdf0ee; border-radius:6px; border-left:3px solid #b03a2e; margin-bottom:8px; display:none; }
+  /* Error */
+  .err { font-size:.75rem; color:#a93226; padding:7px 11px; background:#fdf0ee; border-radius:6px; border-left:3px solid #c0392b; margin-bottom:8px; display:none; }
 
-  /* ── Toast ── */
-  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--brown-dark); color:var(--cream); padding:10px 22px; border-radius:30px; font-size:.82rem; box-shadow:var(--shadow-md); transition:transform .3s ease; z-index:999; white-space:nowrap; }
+  /* Toast */
+  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--brown-dark); color:var(--cream); padding:10px 22px; border-radius:30px; font-size:.82rem; box-shadow:var(--shadow-md); transition:transform .3s ease; z-index:999; white-space:nowrap; pointer-events:none; }
   #toast.show { transform:translateX(-50%) translateY(0); }
-
-  /* ── Progress ── */
-  .progress-track { width:100%; height:8px; background:var(--cream-deeper); border-radius:4px; overflow:hidden; margin:12px 0; }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--green-dark)); border-radius:4px; width:0%; transition:width .3s ease; }
 </style>
 </head>
 <body>
@@ -229,258 +219,193 @@
 
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      PURCHASE MODAL
-     Panels: pay → utr → (verifying) → success / author-key
-     ══════════════════════════════════════════════════════════ -->
+     Panels: pay → utr → verifying → success
+     Author passkey toggles in place of UTR panel
+     ═══════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="purchaseModal">
   <div class="modal">
 
-    <h2 id="pm-title">Purchase Book</h2>
-    <p class="modal-sub" id="pm-sub"></p>
+    <div class="modal-title" id="pm-title"></div>
+    <div class="modal-sub"   id="pm-sub"></div>
 
-    <!-- Step indicator (hidden in author/success/verifying states) -->
-    <div class="steps-row" id="pm-steps">
-      <div class="step-col">
-        <div class="step-dot active" id="sd1">1</div>
-        <div class="step-label">Pay</div>
-      </div>
-      <div class="step-line" id="sl1"></div>
-      <div class="step-col">
-        <div class="step-dot" id="sd2">2</div>
-        <div class="step-label">Confirm</div>
-      </div>
-      <div class="step-line" id="sl2"></div>
-      <div class="step-col">
-        <div class="step-dot" id="sd3">3</div>
-        <div class="step-label">Unlock</div>
-      </div>
+    <!-- Step indicator -->
+    <div class="steps" id="pm-steps">
+      <div class="scol"><div class="sdot on" id="sd1">1</div><div class="slabel">Pay</div></div>
+      <div class="sline" id="sl1"></div>
+      <div class="scol"><div class="sdot"    id="sd2">2</div><div class="slabel">Confirm</div></div>
+      <div class="sline" id="sl2"></div>
+      <div class="scol"><div class="sdot"    id="sd3">3</div><div class="slabel">Read</div></div>
     </div>
 
-    <!-- ── PANEL: PAY ─────────────────────────────────── -->
-    <div id="panel-pay">
+    <!-- ── PANEL 1: QR PAYMENT ─────────────────────── -->
+    <div id="pp-pay">
       <div class="qr-box">
-        <div class="qr-label">📷 Scan with any UPI app (other device)</div>
+        <div class="qr-eyebrow">📷 Open your UPI app → Scan QR → Pay</div>
         <div id="qrcode"></div>
-        <div class="qr-amount-pill" id="pm-amount">₹–</div>
-        <div class="qr-upi-row">
-          <span class="qr-upi-chip" id="pm-upi-show"></span>
-          <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
+        <div class="amount-pill" id="pm-amount">₹–</div>
+        <div class="upi-row">
+          <span class="upi-chip" id="pm-upi-text"></span>
+          <button class="copy-btn" onclick="copyUPI()">Copy</button>
         </div>
-        <div class="qr-apps">
-          <span class="qr-app">GPay</span>
-          <span class="qr-app">PhonePe</span>
-          <span class="qr-app">Paytm</span>
-          <span class="qr-app">BHIM</span>
-          <span class="qr-app">Any UPI</span>
+        <div class="app-chips">
+          <span class="app-chip">GPay</span>
+          <span class="app-chip">PhonePe</span>
+          <span class="app-chip">Paytm</span>
+          <span class="app-chip">BHIM</span>
+          <span class="app-chip">Any UPI</span>
         </div>
       </div>
-
-      <div class="or-divider">or pay on this phone</div>
-
-      <!-- Genuine anchor-tag tap — not a script redirect, so no fraud block -->
-      <a id="pm-phone-btn" href="#" class="pay-phone-btn" target="_blank" rel="noopener">
-        📲 Open UPI App &amp; Pay
-      </a>
-
+      <p style="font-size:.75rem;color:var(--text-mid);text-align:center;line-height:1.6;margin-bottom:4px;">
+        After paying, tap <strong>I've Paid →</strong> and enter your Transaction ID.
+      </p>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('purchaseModal')">Cancel</button>
-        <button class="btn btn-green" onclick="showUTRPanel()">I've Paid →</button>
+        <button class="btn btn-green" onclick="showPanel('utr')">I've Paid →</button>
       </div>
-
-      <div class="author-link" onclick="showAuthorPanel()">🖊 I'm the author — use passkey</div>
+      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
     </div>
 
-    <!-- ── PANEL: UTR ENTRY ──────────────────────────── -->
-    <div id="panel-utr" style="display:none;">
-      <div class="utr-box">
-        <div class="utr-box-title">✅ Enter your Transaction ID</div>
-        <div class="utr-help">
-          After a successful UPI payment, your app shows a
-          <strong>12-digit UTR / Transaction Reference Number</strong>.
-          Enter it below — we'll verify it automatically.
+    <!-- ── PANEL 2: UTR ENTRY ──────────────────────── -->
+    <div id="pp-utr" style="display:none">
+      <div class="info-box green">
+        <div class="ibox-title green">✅ Enter your Transaction ID (UTR)</div>
+        <div class="ibox-body">
+          Every UPI payment gives you a <strong>Transaction / Reference ID</strong>.
+          Enter it below — it proves your payment went through.
+          <div class="ibox-where">
+            <strong>Where to find it:</strong><br>
+            • <strong>GPay</strong> → tap the payment → "Transaction ID"<br>
+            • <strong>PhonePe</strong> → History → tap payment → "UTR No."<br>
+            • <strong>Paytm</strong> → Passbook → tap payment → "Bank Ref. No"<br>
+            • <strong>BHIM / others</strong> → History → tap transaction
+          </div>
         </div>
-        <div class="utr-where">
-          <strong>Where to find it:</strong><br>
-          • GPay → transaction → "Transaction ID"<br>
-          • PhonePe → History → tap payment → "UTR No."<br>
-          • Paytm → Passbook → tap payment → "Bank Ref. No"<br>
-          • BHIM → History → tap transaction
-        </div>
-        <input class="modal-input" id="pm-utr" type="text"
-               placeholder="e.g. 421831092847"
-               maxlength="22" autocomplete="off"
-               oninput="sanitiseUTR(this)"
-               onkeydown="if(event.key==='Enter')verifyUTR()">
-        <div class="err-box" id="utr-error"></div>
       </div>
+      <input class="field" id="pm-utr" type="text"
+             placeholder="e.g. 421831092847"
+             maxlength="22" autocomplete="off"
+             oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'').toUpperCase()"
+             onkeydown="if(event.key==='Enter')verifyUTR()">
+      <div class="err" id="utr-err"></div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPayPanel()">← Back</button>
-        <button class="btn btn-green" onclick="verifyUTR()">Verify Payment →</button>
+        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
+        <button class="btn btn-green" onclick="verifyUTR()">Verify &amp; Unlock →</button>
       </div>
-      <div class="author-link" onclick="showAuthorPanel()">🖊 I'm the author — use passkey</div>
+      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
     </div>
 
-    <!-- ── PANEL: VERIFYING ──────────────────────────── -->
-    <div id="panel-verifying" style="display:none;">
-      <div class="verify-state">
+    <!-- ── PANEL 3: VERIFYING ──────────────────────── -->
+    <div id="pp-verifying" style="display:none">
+      <div class="spinner-wrap">
         <div class="spinner"></div>
-        <div class="verify-text">Verifying your payment…</div>
+        <div class="spinner-label">Verifying payment…</div>
       </div>
     </div>
 
-    <!-- ── PANEL: SUCCESS ───────────────────────────── -->
-    <div id="panel-success" style="display:none;">
-      <div class="success-state">
-        <div class="success-icon">🎉</div>
+    <!-- ── PANEL 4: SUCCESS ────────────────────────── -->
+    <div id="pp-success" style="display:none">
+      <div class="success-wrap">
+        <div class="success-emoji">🎉</div>
         <div class="success-title">Payment Verified!</div>
-        <div class="success-sub">Opening your book now…</div>
+        <div class="success-sub">Opening your book…</div>
       </div>
     </div>
 
-    <!-- ── PANEL: AUTHOR PASSKEY ─────────────────────── -->
-    <div id="panel-author" style="display:none;">
-      <div class="author-box">
-        <div class="author-box-title">✍️ Author Passkey</div>
-        <p style="font-size:.76rem;color:var(--text-mid);line-height:1.55;margin-bottom:10px;">
-          Enter the passkey for this book. Authors receive their passkey from the
-          Livekitaab team when their book is published.
-        </p>
-        <input class="modal-input" id="pm-authorkey" type="password"
-               placeholder="Author passkey…" autocomplete="off"
-               onkeydown="if(event.key==='Enter')verifyAuthorKey()">
-        <div class="err-box" id="author-error"></div>
+    <!-- ── PANEL 5: AUTHOR PASSKEY ─────────────────── -->
+    <div id="pp-author" style="display:none">
+      <div class="info-box gold">
+        <div class="ibox-title gold">✍️ Author Passkey</div>
+        <div class="ibox-body">
+          Enter the passkey you received from the Livekitaab team when your book was published.
+          This unlocks the book for you at no charge.
+        </div>
       </div>
+      <input class="field" id="pm-authorkey" type="text"
+             placeholder="Your author passkey…"
+             autocomplete="off"
+             onkeydown="if(event.key==='Enter')verifyAuthorKey()">
+      <div class="err" id="author-err"></div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPayPanel()">← Back</button>
-        <button class="btn btn-brown" onclick="verifyAuthorKey()">🔓 Unlock as Author</button>
+        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
+        <button class="btn btn-gold"  onclick="verifyAuthorKey()">🔓 Unlock as Author</button>
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- Download modal (kept for .exe fallback) -->
-<div class="modal-overlay" id="downloadModal">
-  <div class="modal">
-    <h2>Downloading…</h2>
-    <p id="dl-title" style="font-size:.82rem;color:var(--text-mid);margin-bottom:4px;"></p>
-    <div class="progress-track"><div class="progress-fill" id="dlProgress"></div></div>
-    <p id="dlPct" style="font-size:.78rem;color:var(--text-light);text-align:right;">0%</p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="cancelDownload()">Cancel</button>
-    </div>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  CONFIG
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 const LIBRARY_URL = 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json';
-const API_URL     = 'https://web-production-a6ac9.up.railway.app'; // your Railway backend
+const API_URL     = 'https://web-production-a6ac9.up.railway.app';
 
-// ══════════════════════════════════════════════════════════════
-//  DEMO BOOKS (fallback if library.json unreachable)
-//
-//  HOW TO ADD AUTHOR PASSKEYS IN library.json:
-//  1. Choose a secret passkey for the author, e.g. "sundarban2024"
-//  2. Get its SHA-256 hash at https://sha256.net  (lowercase the passkey first)
-//  3. Add  "author_key_hash": "<that hash>"  to the book entry
-//
-//  HOW UTR VERIFICATION WORKS:
-//  - Frontend POSTs { utr, book_id, amount, upi_id } to API_URL/verify-utr
-//  - Your Railway backend should check the UTR against your UPI account
-//    and return { verified: true } or { verified: false, reason: "..." }
-//  - If your backend isn't set up yet, it falls back to a pending-approval
-//    flow where the UTR is logged and the admin can approve manually.
-// ══════════════════════════════════════════════════════════════
-const DEMO_BOOKS = [
-  {
-    id: 'somoyer',
-    title: 'Somoyer Chabikathi',
-    author: 'Team Livekitaab',
-    type: 'novel', price: 0,
-    cover: 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png',
-    file:  'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/Test.clbk'
-  },
-  {
-    id: 'ordhek_payer_chap',
-    title: 'Ordhek Payer Chap',
-    author: 'Panpriyo Nondi',
-    type: 'novella', price: 30,
-    cover: 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png',
-    exe:   'https://github.com/livekitaab/library/releases/download/Payer_chap/Ordhek.Payer.Chap.exe',
-    upi_id: 'yourname@upi',
-    // author_key_hash: sha256('your-secret-passkey') — set in library.json
-    author_key_hash: ''
-  },
-  {
-    id: 'Ek_Muhurter_Sporsho',
-    title: 'Ek Muhurter Sporsho',
-    author: 'Shubhankar Babu',
-    type: 'short_story', price: 10,
-    cover: 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png',
-    exe:   'https://github.com/livekitaab/library/releases/download/Muhurter_Sporsho/Ek.Muhurter.Sporsho.exe',
-    upi_id: 'yourname@upi',
-    author_key_hash: ''
-  },
-  {
-    id: 'Jontrer_Songsar',
-    title: 'Poripati Jontrer Songsar',
-    author: 'Shubhankar Babu',
-    type: 'short_story', price: 10,
-    cover: 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png',
-    exe:   'https://github.com/livekitaab/library/releases/download/JontrerSongsar/Jontrer.Sonsar.exe',
-    upi_id: 'yourname@upi',
-    author_key_hash: ''
-  }
+// ═══════════════════════════════════════════════════════════
+//  FALLBACK (matches your real library.json structure)
+// ═══════════════════════════════════════════════════════════
+const FALLBACK_BOOKS = [
+  { id:'somoyer', title:'Somoyer Chabikathi', type:'novel', price:0, author:'Team Livekitaab',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png',
+    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/Test.clbk',
+    upi_id:'arohanchatterjee881@okicici', author_key:'LIVEKITAAB-SOMOYER-2024' },
+  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap', type:'novella', price:30, author:'Panpriyo Nondi',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png',
+    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
+    upi_id:'arohanchatterjee881@okicici', author_key:'NONDI-PAYER-CHAP-2024' },
+  { id:'Ek_Muhurter_Sporsho', title:'Ek Muhurter Sporsho', type:'short_story', price:1, author:'Shubhankar Babu',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png',
+    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/EMS.lbk',
+    upi_id:'arohanchatterjee881@okicici', author_key:'BABU-EMS-2024' },
+  { id:'Jontrer_Songsar', title:'Poripati Jontrer Songsar', type:'short_story', price:1, author:'Shubhankar Babu',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png',
+    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
+    upi_id:'arohanchatterjee881@okicici', author_key:'BABU-JS-2024' }
 ];
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 let allBooks    = [];
 let filterFree  = false;
 let pendingBook = null;
-let downloadXHR = null;
-let ownedIds    = JSON.parse(localStorage.getItem('owned_ids') || '[]');
+let ownedIds    = JSON.parse(localStorage.getItem('lk_owned') || '[]');
+let usedUTRs    = JSON.parse(localStorage.getItem('lk_utrs')  || '[]');
 
-// ══════════════════════════════════════════════════════════════
-//  NAV HELPER
-// ══════════════════════════════════════════════════════════════
-const _basePath = (() => {
-  const p = window.location.pathname;
-  return p.substring(0, p.lastIndexOf('/'));
-})();
-function nav(page) { window.location.href = _basePath + '/' + page; }
+// ═══════════════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════════════
+const _base = (() => { const p=window.location.pathname; return p.substring(0,p.lastIndexOf('/')); })();
+function nav(page) { window.location.href = _base+'/'+page; }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  BOOT
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
   try {
     const r = await fetch(LIBRARY_URL);
     const j = await r.json();
-    allBooks = j.books || DEMO_BOOKS;
-  } catch { allBooks = DEMO_BOOKS; }
+    allBooks = j.books || FALLBACK_BOOKS;
+  } catch { allBooks = FALLBACK_BOOKS; }
   renderLibrary();
 });
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  RENDER
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function renderLibrary() {
-  const types = { novels:'novel', novellas:'novella', shorts:'short_story' };
+  const map = { novels:'novel', novellas:'novella', shorts:'short_story' };
   let shown = 0;
-  for (const [key, type] of Object.entries(types)) {
-    const grid = document.getElementById('grid-' + key);
-    const list = allBooks.filter(b => b.type === type && (!filterFree || b.price === 0));
+  for (const [key, type] of Object.entries(map)) {
+    const grid = document.getElementById('grid-'+key);
+    const list = allBooks.filter(b => b.type===type && (!filterFree || b.price===0));
     grid.innerHTML = '';
     if (!list.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span>🌿</span>No ${key} found${filterFree?' in the free collection':''}.</div>`;
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span>🌿</span>No ${key} found.</div>`;
     } else {
       list.forEach(b => grid.appendChild(makeCard(b)));
       shown += list.length;
@@ -491,52 +416,50 @@ function renderLibrary() {
 }
 
 function makeCard(book) {
-  const owned   = ownedIds.includes(book.id);
-  const isFree  = book.price === 0;
-  const hasLbk  = !!(book.file);
-  const hasExe  = !!(book.exe);
-  const canRead = hasLbk && (isFree || owned);
-  const exeOnly = hasExe && !hasLbk;
+  const owned  = ownedIds.includes(book.id);
+  const isFree = book.price === 0;
+  const hasFile= !!(book.file);
+  const canRead= hasFile && (isFree || owned);
 
   const card = document.createElement('div');
   card.className = 'book-card';
 
-  const cw = document.createElement('div');
-  cw.className = 'cover-wrap';
+  // Cover
+  const cw = document.createElement('div'); cw.className = 'cover-wrap';
   if (book.cover) {
     const img = document.createElement('img');
-    img.className = 'book-cover'; img.src = book.cover; img.alt = book.title; img.loading = 'lazy';
-    img.onerror = () => { cw.innerHTML = '<div class="book-cover-placeholder">📕</div>'; };
+    img.className='book-cover'; img.src=book.cover; img.alt=book.title; img.loading='lazy';
+    img.onerror = () => { cw.innerHTML='<div class="book-cover-placeholder">📕</div>'; };
     cw.appendChild(img);
-  } else { cw.innerHTML = '<div class="book-cover-placeholder">📕</div>'; }
+  } else { cw.innerHTML='<div class="book-cover-placeholder">📕</div>'; }
   const badge = document.createElement('span');
-  badge.className = 'book-badge ' + (isFree?'badge-free':'badge-paid');
+  badge.className = 'book-badge '+(isFree?'badge-free':'badge-paid');
   badge.textContent = isFree ? 'Free' : '₹'+book.price;
   cw.appendChild(badge);
 
-  const info = document.createElement('div');
-  info.className = 'book-info';
-  info.innerHTML = `<div class="book-title">${escHtml(book.title)}</div><div class="book-author">${escHtml(book.author)}</div>`;
+  // Info
+  const info = document.createElement('div'); info.className='book-info';
+  info.innerHTML = `<div class="book-title">${esc(book.title)}</div><div class="book-author">${esc(book.author||'')}</div>`;
 
-  const ac = document.createElement('div'); ac.className = 'book-action';
-  const btn = document.createElement('button'); btn.className = 'btn';
+  // Action button
+  const ac = document.createElement('div'); ac.className='book-action';
+  const btn = document.createElement('button'); btn.className='btn';
   if (canRead) {
-    btn.className += ' btn-read'; btn.innerHTML = '📖 Read'; btn.onclick = () => openReader(book);
-  } else if (!isFree && !owned && (hasLbk||hasExe)) {
-    btn.className += ' btn-buy'; btn.innerHTML = `🛒 Buy ₹${book.price}`; btn.onclick = () => showPurchaseModal(book);
-  } else if (exeOnly && isFree) {
-    btn.className += ' btn-read'; btn.innerHTML = '💾 Download'; btn.onclick = () => window.open(book.exe,'_blank');
+    btn.className+=' btn-read'; btn.innerHTML='📖 Read'; btn.onclick=()=>openReader(book);
+  } else if (!isFree && !owned) {
+    btn.className+=' btn-buy'; btn.innerHTML=`🛒 Buy ₹${book.price}`; btn.onclick=()=>openPurchase(book);
   } else {
-    btn.className += ' btn-owned'; btn.innerHTML = 'Coming Soon'; btn.disabled=true; btn.style.opacity='.5'; btn.style.cursor='default';
+    btn.className+=' btn-muted'; btn.innerHTML='Coming Soon'; btn.disabled=true; btn.style.opacity='.5'; btn.style.cursor='default';
   }
   ac.appendChild(btn);
+
   card.appendChild(cw); card.appendChild(info); card.appendChild(ac);
   return card;
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  TABS / FILTER
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function switchTab(key, el) {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
@@ -551,10 +474,10 @@ function toggleFree() {
   renderLibrary();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PURCHASE MODAL — open
-// ══════════════════════════════════════════════════════════════
-function showPurchaseModal(book) {
+// ═══════════════════════════════════════════════════════════
+//  OPEN PURCHASE MODAL
+// ═══════════════════════════════════════════════════════════
+function openPurchase(book) {
   pendingBook = book;
   document.getElementById('pm-title').textContent = book.title;
   document.getElementById('pm-sub').textContent   = `₹${book.price} · one-time purchase`;
@@ -562,251 +485,163 @@ function showPurchaseModal(book) {
   const upiId  = book.upi_id || 'yourname@upi';
   const amount = book.price;
 
-  // UPI URL — placed inside QR image only, NOT used as window.location
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Livekitaab')}&am=${amount}&cu=INR&tn=${encodeURIComponent('Livekitaab: '+book.title)}`;
+  // UPI URL — ONLY used inside the QR image, never as a page redirect
+  const upiUrl = `upi://pay?pa=${enc(upiId)}&pn=${enc('Livekitaab')}&am=${amount}&cu=INR&tn=${enc('Livekitaab: '+book.title)}`;
 
-  // Same-phone button: genuine <a> tap — this is the correct pattern,
-  // no fraud triggered because it's a real user gesture on an anchor element
-  document.getElementById('pm-phone-btn').href = upiUrl;
+  document.getElementById('pm-amount').textContent   = `₹${amount}`;
+  document.getElementById('pm-upi-text').textContent = upiId;
 
-  // Labels
-  document.getElementById('pm-amount').textContent  = `₹${amount}`;
-  document.getElementById('pm-upi-show').textContent = upiId;
+  // Draw QR
+  const el = document.getElementById('qrcode');
+  el.innerHTML = '';
+  new QRCode(el, { text:upiUrl, width:172, height:172, colorDark:'#3b2010', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
 
-  // Generate QR
-  const qrEl = document.getElementById('qrcode');
-  qrEl.innerHTML = '';
-  new QRCode(qrEl, {
-    text: upiUrl, width: 172, height: 172,
-    colorDark: '#3b2010', colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
-  showPayPanel();
+  showPanel('pay');
   openModal('purchaseModal');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PANEL NAVIGATION
-// ══════════════════════════════════════════════════════════════
-function hideAllPanels() {
-  ['pay','utr','verifying','success','author'].forEach(p =>
-    document.getElementById('panel-'+p).style.display = 'none'
-  );
+// ═══════════════════════════════════════════════════════════
+//  PANEL SYSTEM
+//  Panels: pay | utr | verifying | success | author
+// ═══════════════════════════════════════════════════════════
+const PANELS = ['pay','utr','verifying','success','author'];
+
+function showPanel(name) {
+  PANELS.forEach(p => document.getElementById('pp-'+p).style.display = 'none');
+  document.getElementById('pp-'+name).style.display = 'block';
+  document.getElementById('pm-steps').style.display = ['verifying','success','author'].includes(name) ? 'none' : 'flex';
+
+  // Step dot states
+  const states = { pay:[1,[],[]], utr:[2,[1],[]], verifying:[3,[1,2],[]], success:[null,[1,2,3],[]] };
+  const s = states[name];
+  if (s) {
+    [1,2,3].forEach(i => {
+      const d = document.getElementById('sd'+i);
+      if (s[2].includes(i))      { d.className='sdot ok';  d.textContent='✓'; }
+      else if (s[0]===i)         { d.className='sdot on';  d.textContent=i; }
+      else                       { d.className='sdot';     d.textContent=i; }
+    });
+    document.getElementById('sl1').className = 'sline'+(s[1].includes(1)?' ok':'');
+    document.getElementById('sl2').className = 'sline'+(s[1].includes(2)?' ok':'');
+  }
+
+  // Auto-focus inputs
+  if (name==='utr')    { document.getElementById('pm-utr').value='';       document.getElementById('utr-err').style.display='none';    setTimeout(()=>document.getElementById('pm-utr').focus(),60); }
+  if (name==='author') { document.getElementById('pm-authorkey').value=''; document.getElementById('author-err').style.display='none'; setTimeout(()=>document.getElementById('pm-authorkey').focus(),60); }
 }
 
-function setStepDots(active, done) {
-  // active = [1,2,3] indices (1-based) that are active
-  // done   = [1,2,3] indices that are done
-  document.getElementById('pm-steps').style.display = 'flex';
-  [1,2,3].forEach(i => {
-    const d = document.getElementById('sd'+i);
-    if (done.includes(i))   { d.className='step-dot done';   d.textContent='✓'; }
-    else if (active===i)    { d.className='step-dot active'; d.textContent=i; }
-    else                    { d.className='step-dot';        d.textContent=i; }
-  });
-  document.getElementById('sl1').className = 'step-line' + (done.includes(1)?' done':'');
-  document.getElementById('sl2').className = 'step-line' + (done.includes(2)?' done':'');
-}
-
-function showPayPanel() {
-  hideAllPanels();
-  document.getElementById('panel-pay').style.display = 'block';
-  setStepDots(1, []);
-  document.getElementById('utr-error').style.display = 'none';
-}
-function showUTRPanel() {
-  hideAllPanels();
-  document.getElementById('panel-utr').style.display = 'block';
-  document.getElementById('pm-utr').value = '';
-  document.getElementById('utr-error').style.display = 'none';
-  setStepDots(2, [1]);
-  setTimeout(() => document.getElementById('pm-utr').focus(), 60);
-}
-function showVerifying() {
-  hideAllPanels();
-  document.getElementById('panel-verifying').style.display = 'block';
-  setStepDots(3, [1,2]);
-}
-function showSuccess() {
-  hideAllPanels();
-  document.getElementById('panel-success').style.display = 'block';
-  document.getElementById('pm-steps').style.display = 'none';
-}
-function showAuthorPanel() {
-  hideAllPanels();
-  document.getElementById('panel-author').style.display = 'block';
-  document.getElementById('pm-steps').style.display = 'none';
-  document.getElementById('author-error').style.display = 'none';
-  document.getElementById('pm-authorkey').value = '';
-  setTimeout(() => document.getElementById('pm-authorkey').focus(), 60);
-}
-
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  UTR VERIFICATION
 //
-//  Your Railway backend should expose:
+//  Your Railway backend should handle:
 //  POST /verify-utr
-//  Body: { utr: string, book_id: string, amount: number, upi_id: string }
-//  Response: { verified: true } or { verified: false, reason: string }
+//  Body: { utr, book_id, amount, upi_id }
+//  Return: { verified: true } or { verified: false, reason: "..." }
 //
-//  If the endpoint doesn't exist yet, the catch block logs the UTR
-//  for manual approval — you can implement a simple admin endpoint later.
-// ══════════════════════════════════════════════════════════════
-function sanitiseUTR(input) {
-  input.value = input.value.replace(/[^0-9A-Za-z]/g, '').toUpperCase();
-}
-
+//  If the endpoint isn't ready yet, see the catch block below —
+//  UTRs are logged to /log-utr for manual admin approval.
+// ═══════════════════════════════════════════════════════════
 async function verifyUTR() {
   const utr   = document.getElementById('pm-utr').value.trim().toUpperCase();
-  const errEl = document.getElementById('utr-error');
+  const errEl = document.getElementById('utr-err');
   errEl.style.display = 'none';
 
   if (utr.length < 10) {
-    errEl.textContent = 'Please enter a valid UTR / Transaction ID (at least 10 characters).';
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = 'Please enter a valid Transaction ID (at least 10 characters).';
+    errEl.style.display = 'block'; return;
   }
-
-  // Check if already used (prevent replay)
-  const usedUTRs = JSON.parse(localStorage.getItem('used_utrs') || '[]');
   if (usedUTRs.includes(utr)) {
-    errEl.textContent = 'This transaction ID has already been used.';
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = 'This Transaction ID has already been used.';
+    errEl.style.display = 'block'; return;
   }
 
-  showVerifying();
+  showPanel('verifying');
 
   try {
-    const res = await fetch(`${API_URL}/verify-utr`, {
+    const res  = await fetch(`${API_URL}/verify-utr`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        utr,
-        book_id: pendingBook.id,
-        amount:  pendingBook.price,
-        upi_id:  pendingBook.upi_id || 'yourname@upi'
-      })
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id })
     });
-
     const data = await res.json();
 
     if (data.verified) {
-      // Mark UTR as used locally (backend should also track this)
       usedUTRs.push(utr);
-      localStorage.setItem('used_utrs', JSON.stringify(usedUTRs));
-      unlockBook(pendingBook, true);
+      localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
+      unlockBook(pendingBook);
     } else {
-      // Verification failed — show reason
-      showUTRPanel();
-      const errEl2 = document.getElementById('utr-error');
-      errEl2.textContent = data.reason || 'Payment not found. Please check the Transaction ID and try again.';
-      errEl2.style.display = 'block';
+      showPanel('utr');
+      const e = document.getElementById('utr-err');
+      e.textContent = data.reason || 'Payment not found. Please double-check your Transaction ID.';
+      e.style.display = 'block';
     }
-
-  } catch (e) {
-    // ── FALLBACK: backend not reachable ────────────────────
-    // Log the UTR for manual admin approval and optimistically unlock
-    // with a "pending" flag so admin can revoke if fraudulent.
-    // Replace this with a proper pending-queue once backend supports it.
-    console.warn('verify-utr endpoint not reachable, using optimistic unlock:', e);
-    await logUTRForApproval(utr);
-    unlockBook(pendingBook, true);
+  } catch {
+    // Backend not reachable — log UTR for manual review, optimistically unlock
+    try {
+      fetch(`${API_URL}/log-utr`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id, ts:new Date().toISOString() })
+      });
+    } catch {}
+    usedUTRs.push(utr);
+    localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
+    unlockBook(pendingBook);
   }
 }
 
-async function logUTRForApproval(utr) {
-  // Best-effort — sends UTR to backend for admin review
-  try {
-    await fetch(`${API_URL}/log-utr`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        utr,
-        book_id: pendingBook.id,
-        amount:  pendingBook.price,
-        upi_id:  pendingBook.upi_id,
-        ts:      new Date().toISOString()
-      })
-    });
-  } catch { /* silent */ }
-}
-
-// ══════════════════════════════════════════════════════════════
-//  AUTHOR PASSKEY VERIFICATION
+// ═══════════════════════════════════════════════════════════
+//  AUTHOR PASSKEY
 //
-//  In library.json, set per book:
-//  "author_key_hash": "<sha256 of the passkey you give the author>"
-//
-//  Example: passkey = "myphrasehere"
-//  Hash = sha256("myphrasehere") → paste on https://sha256.net
-//  Give the author only the plain passkey, never the hash.
-// ══════════════════════════════════════════════════════════════
-async function verifyAuthorKey() {
-  const input = document.getElementById('pm-authorkey').value;
-  const errEl = document.getElementById('author-error');
+//  How to set up:
+//  In library.json, add to any book:
+//    "author_key": "WHATEVER-YOU-CHOOSE"
+//  Give that exact string to the author.
+//  They type it here → instant free unlock.
+//  Change the key anytime by updating library.json.
+// ═══════════════════════════════════════════════════════════
+function verifyAuthorKey() {
+  const input  = document.getElementById('pm-authorkey').value.trim();
+  const errEl  = document.getElementById('author-err');
   errEl.style.display = 'none';
 
-  if (!input.trim()) {
+  if (!input) {
     errEl.textContent = 'Please enter your author passkey.';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
 
-  const hash    = await sha256(input.trim()); // NOT lowercased — passkeys are case-sensitive
-  const correct = pendingBook.author_key_hash;
+  // Simple direct string comparison — no hashing, no external tools
+  const correct = pendingBook.author_key || '';
 
   if (!correct) {
-    errEl.textContent = 'This book does not have an author passkey configured yet.';
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = 'No author passkey has been set for this book yet. Contact the Livekitaab team.';
+    errEl.style.display = 'block'; return;
   }
 
-  if (hash === correct) {
-    unlockBook(pendingBook, false); // false = don't show "payment verified" copy
+  if (input === correct) {
+    unlockBook(pendingBook);
   } else {
-    errEl.textContent = 'Incorrect passkey. Contact the Livekitaab team if you need help.';
+    errEl.textContent = 'Incorrect passkey. Check for typos, or contact the Livekitaab team.';
     errEl.style.display = 'block';
     document.getElementById('pm-authorkey').select();
   }
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  UNLOCK
-// ══════════════════════════════════════════════════════════════
-function unlockBook(book, isPaid = true) {
+// ═══════════════════════════════════════════════════════════
+function unlockBook(book) {
   if (!ownedIds.includes(book.id)) {
     ownedIds.push(book.id);
-    localStorage.setItem('owned_ids', JSON.stringify(ownedIds));
+    localStorage.setItem('lk_owned', JSON.stringify(ownedIds));
   }
-  showSuccess();
+  showPanel('success');
   renderLibrary();
-  setTimeout(() => {
-    closeModal('purchaseModal');
-    openReader(book);
-  }, 1600);
+  setTimeout(() => { closeModal('purchaseModal'); openReader(book); }, 1500);
 }
 
-// ══════════════════════════════════════════════════════════════
-//  CRYPTO HELPER
-// ══════════════════════════════════════════════════════════════
-async function sha256(text) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-// ══════════════════════════════════════════════════════════════
-//  COPY UPI ID
-// ══════════════════════════════════════════════════════════════
-function copyUPI() {
-  const id = document.getElementById('pm-upi-show').textContent;
-  navigator.clipboard.writeText(id).then(()=>showToast('UPI ID copied!')).catch(()=>{});
-}
-
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 //  READER
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 const CORS_PROXY = 'https://your-proxy.YOUR-SUBDOMAIN.workers.dev';
 
 function normaliseLbkUrl(url) {
@@ -816,39 +651,40 @@ function normaliseLbkUrl(url) {
   if (m) return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
   if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
     const ok = CORS_PROXY && !CORS_PROXY.includes('YOUR-SUBDOMAIN');
-    return ok ? `${CORS_PROXY}?url=${encodeURIComponent(url)}` : url;
+    return ok ? `${CORS_PROXY}?url=${enc(url)}` : url;
   }
   return url;
 }
 
 function openReader(book) {
-  const normalised = normaliseLbkUrl(book.file || '');
-  sessionStorage.setItem('pending_book', JSON.stringify({...book, file: normalised||book.file}));
+  const file = normaliseLbkUrl(book.file || '');
+  sessionStorage.setItem('pending_book', JSON.stringify({...book, file: file||book.file}));
   nav('Reader.html');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  MODAL / TOAST HELPERS
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  COPY UPI ID
+// ═══════════════════════════════════════════════════════════
+function copyUPI() {
+  const id = document.getElementById('pm-upi-text').textContent;
+  navigator.clipboard.writeText(id).then(()=>toast('UPI ID copied!')).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-let _toastTimer;
-function showToast(msg) {
+let _tt;
+function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  clearTimeout(_tt); _tt = setTimeout(()=>t.classList.remove('show'), 2600);
 }
 
-function cancelDownload() {
-  if (downloadXHR) { downloadXHR.abort(); downloadXHR = null; }
-  closeModal('downloadModal');
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function enc(s) { return encodeURIComponent(s); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
