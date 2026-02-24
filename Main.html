@@ -541,6 +541,10 @@ function showPanel(name) {
 //  If the endpoint isn't ready yet, see the catch block below —
 //  UTRs are logged to /log-utr for manual admin approval.
 // ═══════════════════════════════════════════════════════════
+// Polling state
+let _pollInterval = null;
+let _pendingVerificationCode = null;
+
 async function verifyUTR() {
   const utr   = document.getElementById('pm-utr').value.trim().toUpperCase();
   const errEl = document.getElementById('utr-err');
@@ -556,37 +560,59 @@ async function verifyUTR() {
   }
 
   showPanel('verifying');
+  document.querySelector('#pp-verifying .spinner-label').textContent = 'Submitting payment…';
 
   try {
-    const res  = await fetch(`${API_URL}/verify-utr`, {
+    const res  = await fetch(`${API_URL}/api/request-purchase`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id })
+      body: JSON.stringify({ book_id: pendingBook.id, price: pendingBook.price, transaction_id: utr })
     });
     const data = await res.json();
 
-    if (data.verified) {
-      usedUTRs.push(utr);
-      localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
-      unlockBook(pendingBook);
-    } else {
+    if (data.error) {
       showPanel('utr');
       const e = document.getElementById('utr-err');
-      e.textContent = data.reason || 'Payment not found. Please double-check your Transaction ID.';
+      e.textContent = data.error === 'Transaction ID already used'
+        ? 'This Transaction ID has already been submitted.'
+        : (data.error || 'Submission failed. Please try again.');
       e.style.display = 'block';
+      return;
     }
-  } catch {
-    // Backend not reachable — log UTR for manual review, optimistically unlock
-    try {
-      fetch(`${API_URL}/log-utr`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id, ts:new Date().toISOString() })
-      });
-    } catch {}
+
+    // Submitted — now poll for admin approval
+    _pendingVerificationCode = data.verification_code;
     usedUTRs.push(utr);
     localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
-    unlockBook(pendingBook);
+
+    document.querySelector('#pp-verifying .spinner-label').innerHTML =
+      'Payment submitted ✓<br><small style="color:var(--text-light);font-size:.72rem;">Waiting for approval — usually a few minutes.</small>';
+
+    if (_pollInterval) clearInterval(_pollInterval);
+    _pollInterval = setInterval(() => pollApproval(pendingBook), 5000);
+
+  } catch (e) {
+    showPanel('utr');
+    const e2 = document.getElementById('utr-err');
+    e2.textContent = 'Could not reach server. Check your connection and try again.';
+    e2.style.display = 'block';
   }
+}
+
+async function pollApproval(book) {
+  if (!_pendingVerificationCode) return;
+  try {
+    const res  = await fetch(`${API_URL}/api/poll-purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ verification_code: _pendingVerificationCode, book_id: book.id })
+    });
+    const data = await res.json();
+    if (data.approved) {
+      clearInterval(_pollInterval); _pollInterval = null; _pendingVerificationCode = null;
+      unlockBook(book);
+    }
+  } catch { /* retry next tick */ }
 }
 
 // ═══════════════════════════════════════════════════════════
