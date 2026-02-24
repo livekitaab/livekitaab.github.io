@@ -3,688 +3,685 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiveKitaab — Book Library</title>
+<title>LiveKitaab — Bengali Books for All Ages</title>
+<meta name="description" content="LiveKitaab — Premium Bengali digital books for all ages. Novels, novellas, and short stories.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --brown:       #a46636;
-    --brown-deep:  #7a4a22;
-    --brown-dark:  #3b2010;
-    --green:       #6bbf8e;
-    --green-light: #a2d5a1;
-    --green-dark:  #3d7a56;
-    --cream:       #f6e9d7;
-    --cream-dark:  #ecdcc4;
+    --brown:      #a46636;
+    --brown-deep: #7a4a22;
+    --brown-dark: #3b2010;
+    --green:      #6bbf8e;
+    --green-dark: #3d7a56;
+    --cream:      #f6e9d7;
+    --cream-dark: #ecdcc4;
     --cream-deeper:#e0cdb0;
-    --gold:        #f7e7b5;
-    --gold-deep:   #d4a853;
-    --text-dark:   #2a1a0e;
-    --text-mid:    #5c3d1e;
-    --text-light:  #8c6a45;
-    --shadow-md:   0 4px 20px rgba(58,28,8,.14);
-    --shadow-lg:   0 8px 40px rgba(58,28,8,.22);
-    --radius:      12px;
-    --radius-sm:   8px;
+    --gold:       #f7e7b5;
+    --gold-deep:  #d4a853;
+    --text-dark:  #2a1a0e;
+    --text-mid:   #5c3d1e;
+    --text-light: #8c6a45;
   }
-  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-  html, body { height:100%; }
-  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--text-dark); min-height:100vh; overflow-x:hidden; }
-  body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); }
-  #app { position:relative; z-index:1; display:flex; flex-direction:column; min-height:100vh; }
 
-  /* Nav */
-  .topnav { background:var(--brown-dark); padding:0 24px; height:52px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,.35); position:sticky; top:0; z-index:100; }
-  .topnav-brand { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--gold); letter-spacing:.02em; text-decoration:none; }
-  .topnav-links { display:flex; gap:6px; align-items:center; }
-  .topnav-links a { color:var(--cream); font-size:.82rem; text-decoration:none; padding:5px 12px; border-radius:20px; transition:background .2s,color .2s; }
-  .topnav-links a:hover { background:rgba(246,233,215,.12); color:var(--gold); }
-  .topnav-links .btn-account { background:var(--green); color:var(--brown-dark); font-weight:500; padding:5px 16px; }
-  .topnav-links .btn-account:hover { background:var(--green-light); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
 
-  /* Banner */
-  .banner { background:linear-gradient(120deg,var(--green) 0%,var(--green-light) 55%,var(--gold-deep) 100%); padding:36px 32px 32px; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden; }
-  .banner::after { content:'📚'; position:absolute; right:-10px; bottom:-18px; font-size:110px; opacity:.10; pointer-events:none; transform:rotate(-8deg); }
-  .banner-icon { font-size:2.6rem; flex-shrink:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.15)); }
-  .banner-text h1 { font-family:'Playfair Display',serif; font-size:clamp(1.5rem,4vw,2rem); font-weight:900; color:var(--brown-dark); line-height:1.15; }
-  .banner-text p { font-family:'Lora',serif; font-style:italic; color:var(--brown-deep); font-size:.9rem; margin-top:5px; }
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .03;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
 
-  /* Filter */
-  .filter-bar { background:var(--cream-dark); border-bottom:1.5px solid var(--cream-deeper); padding:10px 20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .filter-label { font-size:.78rem; font-weight:500; color:var(--text-light); text-transform:uppercase; letter-spacing:.08em; margin-right:4px; }
-  .chip { display:inline-flex; align-items:center; gap:5px; padding:4px 14px; border-radius:20px; font-size:.8rem; cursor:pointer; transition:all .2s; border:1.5px solid var(--brown); color:var(--brown); background:transparent; font-family:'DM Sans',sans-serif; white-space:nowrap; }
-  .chip.active { background:var(--green); border-color:var(--green); color:var(--brown-dark); font-weight:500; }
-  .chip:hover:not(.active) { background:rgba(164,102,54,.07); }
-  .filter-spacer { flex:1; }
-  #statusText { font-size:.78rem; color:var(--text-light); font-style:italic; }
+  /* ══════════════════════════════════
+     NAV
+  ══════════════════════════════════ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(59,32,16,.96); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(246,233,215,.08);
+    padding: 0 32px; height: 58px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 20px rgba(0,0,0,.3);
+  }
+  .nav-brand {
+    font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900;
+    text-decoration: none; display: flex; align-items: center; gap: 2px;
+  }
+  .nav-brand .live { color: #fff; }
+  .nav-brand .kitaab { color: var(--gold); }
+  .nav-links { display: flex; gap: 6px; align-items: center; }
+  .nav-links a {
+    color: rgba(246,233,215,.7); font-size: .82rem; text-decoration: none;
+    padding: 6px 14px; border-radius: 20px; transition: all .2s;
+  }
+  .nav-links a:hover { color: var(--gold); background: rgba(246,233,215,.08); }
+  .nav-cta {
+    background: var(--green) !important; color: var(--brown-dark) !important;
+    font-weight: 600 !important; padding: 7px 20px !important;
+  }
+  .nav-cta:hover { background: var(--green-dark) !important; color: white !important; }
 
-  /* Tabs */
-  .tab-strip { display:flex; background:var(--brown-dark); border-bottom:2px solid rgba(164,102,54,.35); position:sticky; top:52px; z-index:90; }
-  .tab-btn { flex:1; padding:13px 8px; text-align:center; font-family:'DM Sans',sans-serif; font-size:.84rem; font-weight:500; color:rgba(246,233,215,.55); cursor:pointer; border:none; background:transparent; transition:all .2s; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
-  .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold-deep); }
-  .tab-btn:hover:not(.active) { color:var(--cream); background:rgba(246,233,215,.06); }
+  /* ══════════════════════════════════
+     HERO
+  ══════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    background:
+      linear-gradient(170deg, rgba(59,32,16,.92) 0%, rgba(122,74,34,.75) 45%, rgba(164,102,54,.5) 75%, transparent 100%),
+      url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1400&q=80') center/cover no-repeat;
+    display: flex; align-items: center;
+    padding: 100px 32px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+    background: linear-gradient(to top, var(--cream), transparent);
+  }
+  .hero-inner { max-width: 680px; position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: .18em; color: var(--green);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1.5px; background: var(--green); }
+  .hero-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(2.6rem, 7vw, 4.4rem);
+    font-weight: 900; color: var(--cream); line-height: 1.08; margin-bottom: 22px;
+    text-shadow: 0 2px 20px rgba(0,0,0,.4);
+  }
+  .hero-title em { color: var(--gold); font-style: italic; }
+  .hero-sub {
+    font-family: 'Lora', serif; font-style: italic; font-size: clamp(.95rem, 2.2vw, 1.1rem);
+    color: rgba(246,233,215,.75); line-height: 1.7; margin-bottom: 36px;
+    max-width: 520px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green); color: var(--brown-dark);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600;
+    padding: 14px 32px; border-radius: 50px; text-decoration: none;
+    transition: all .22s; box-shadow: 0 4px 20px rgba(107,191,142,.3);
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--green-dark); color: white; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(107,191,142,.4); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(246,233,215,.12); color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500;
+    padding: 14px 32px; border-radius: 50px; text-decoration: none;
+    border: 1.5px solid rgba(246,233,215,.25); transition: all .22s;
+  }
+  .btn-secondary:hover { background: rgba(246,233,215,.2); border-color: rgba(246,233,215,.5); }
 
-  /* Shelf */
-  .tab-panel { display:none; padding:28px 16px 80px; animation:fadeIn .2s ease;
-    background: repeating-linear-gradient(180deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 17px,rgba(0,0,0,.05) 17px,rgba(0,0,0,.05) 18px,rgba(255,255,255,.03) 18px,rgba(255,255,255,.03) 19px,rgba(0,0,0,0) 19px,rgba(0,0,0,0) 36px),
-    linear-gradient(172deg,#5c2e10 0%,#7a4422 20%,#a46636 40%,#8b5530 58%,#7a4422 75%,#5c2e10 100%);
-    box-shadow:inset 0 8px 20px rgba(0,0,0,.30),inset 0 -4px 10px rgba(0,0,0,.20); min-height:280px; }
-  .tab-panel.active { display:block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .hero-scroll {
+    position: absolute; bottom: 136px; left: 32px; z-index: 1;
+    display: flex; align-items: center; gap: 8px;
+    font-size: .68rem; text-transform: uppercase; letter-spacing: .12em;
+    color: rgba(246,233,215,.4); animation: bounce 2s ease infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
 
-  /* Grid */
-  .book-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:18px; }
-  .empty-state { text-align:center; padding:60px 20px; color:var(--gold); font-family:'Lora',serif; font-style:italic; font-size:1rem; text-shadow:0 1px 3px rgba(0,0,0,.4); }
-  .empty-state span { display:block; font-size:2.5rem; margin-bottom:12px; }
+  /* ══════════════════════════════════
+     ABOUT
+  ══════════════════════════════════ */
+  .about {
+    padding: 100px 32px;
+    background: var(--cream);
+    position: relative;
+  }
+  .about-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  @media (max-width: 768px) { .about-inner { grid-template-columns: 1fr; gap: 48px; } }
 
-  /* Card */
-  .book-card { background:var(--cream); border-radius:var(--radius); box-shadow:0 6px 18px rgba(0,0,0,.40),0 2px 4px rgba(0,0,0,.22); overflow:hidden; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease; display:flex; flex-direction:column; }
-  .book-card:hover { transform:translateY(-8px) scale(1.02); box-shadow:0 18px 36px rgba(0,0,0,.50),0 4px 8px rgba(0,0,0,.28); }
-  .cover-wrap { position:relative; }
-  .book-cover { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; }
-  .book-cover-placeholder { width:100%; aspect-ratio:2/3; background:linear-gradient(135deg,var(--brown) 0%,var(--brown-deep) 100%); display:flex; align-items:center; justify-content:center; font-size:2.4rem; color:var(--gold); opacity:.7; }
-  .book-badge { position:absolute; top:8px; right:8px; padding:2px 8px; border-radius:10px; font-size:.65rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
-  .badge-free { background:var(--green); color:var(--brown-dark); }
-  .badge-paid { background:var(--gold-deep); color:var(--brown-dark); }
-  .book-info { padding:10px 10px 0; flex:1; }
-  .book-title { font-family:'Playfair Display',serif; font-size:.88rem; font-weight:600; color:var(--text-dark); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .book-author { font-family:'Lora',serif; font-style:italic; font-size:.72rem; color:var(--text-light); margin-top:3px; }
-  .book-action { padding:8px 10px 10px; }
-  .btn { width:100%; padding:7px; border:none; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:500; cursor:pointer; transition:all .18s; display:flex; align-items:center; justify-content:center; gap:5px; }
-  .btn-read { background:var(--green); color:var(--brown-dark); }
-  .btn-read:hover { background:var(--green-dark); color:white; }
-  .btn-buy { background:var(--brown); color:var(--cream); }
-  .btn-buy:hover { background:var(--brown-deep); }
-  .btn-muted { background:var(--cream-dark); color:var(--text-mid); border:1.5px solid var(--cream-deeper); }
+  .about-text {}
+  .section-eyebrow {
+    font-size: .7rem; text-transform: uppercase; letter-spacing: .16em;
+    color: var(--brown); font-weight: 600; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-eyebrow::before { content: ''; width: 20px; height: 1.5px; background: var(--brown); display: inline-block; }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900; color: var(--text-dark); line-height: 1.15; margin-bottom: 20px;
+  }
+  .section-title em { color: var(--brown); font-style: italic; }
+  .section-body {
+    font-family: 'Lora', serif; font-size: .95rem; color: var(--text-mid);
+    line-height: 1.85; margin-bottom: 16px;
+  }
 
-  /* Modal */
-  .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(42,26,14,.62); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:16px; opacity:0; pointer-events:none; transition:opacity .22s; }
-  .modal-overlay.open { opacity:1; pointer-events:all; }
-  .modal { background:var(--cream); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:24px 22px; width:100%; max-width:420px; transform:translateY(16px) scale(.98); transition:transform .22s ease; max-height:94vh; overflow-y:auto; }
-  .modal-overlay.open .modal { transform:translateY(0) scale(1); }
-  .modal-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-dark); margin-bottom:2px; }
-  .modal-sub { font-size:.78rem; color:var(--text-light); }
-  .modal-actions { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; margin-top:14px; }
-  .modal-actions .btn { width:auto; padding:8px 18px; font-size:.8rem; }
-  .btn-ghost { background:transparent; color:var(--text-light); border:1.5px solid var(--cream-deeper); }
-  .btn-ghost:hover { background:var(--cream-dark); }
-  .btn-green { background:var(--green); color:var(--brown-dark); font-weight:600; }
-  .btn-green:hover { background:var(--green-dark); color:white; }
-  .btn-gold { background:var(--gold-deep); color:var(--brown-dark); font-weight:600; }
-  .btn-gold:hover { filter:brightness(1.08); }
-  .field { width:100%; padding:9px 12px; border-radius:var(--radius-sm); border:1.5px solid var(--cream-deeper); background:white; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--text-dark); outline:none; transition:border-color .18s; margin-bottom:8px; }
-  .field:focus { border-color:var(--green); }
-  .field::placeholder { color:var(--text-light); }
-  .divider { height:1px; background:var(--cream-deeper); margin:14px 0; }
+  .about-features { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+  .feature-row { display: flex; align-items: flex-start; gap: 14px; }
+  .feature-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .feature-text-title { font-size: .84rem; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+  .feature-text-body  { font-size: .78rem; color: var(--text-light); line-height: 1.55; }
 
-  /* Step bar */
-  .steps { display:flex; align-items:center; margin:14px 0 16px; }
-  .sdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; flex-shrink:0; transition:all .25s; background:var(--cream-deeper); color:var(--text-light); }
-  .sdot.on  { background:var(--brown); color:white; box-shadow:0 0 0 3px rgba(164,102,54,.2); }
-  .sdot.ok  { background:var(--green); color:var(--brown-dark); }
-  .sline { flex:1; height:2px; background:var(--cream-deeper); transition:background .25s; }
-  .sline.ok { background:var(--green); }
-  .scol { display:flex; flex-direction:column; align-items:center; }
-  .slabel { font-size:.62rem; color:var(--text-light); margin-top:3px; white-space:nowrap; }
+  /* About visual side */
+  .about-visual {
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .about-card-stack { position: relative; width: 300px; height: 380px; }
+  .stack-card {
+    position: absolute; border-radius: 16px; box-shadow: 0 12px 40px rgba(58,28,8,.2);
+    overflow: hidden;
+  }
+  .stack-card:nth-child(1) { width: 220px; height: 300px; top: 60px; left: 60px; transform: rotate(6deg); background: var(--brown-deep); z-index: 1; }
+  .stack-card:nth-child(2) { width: 220px; height: 300px; top: 30px; left: 30px; transform: rotate(2deg); background: var(--brown); z-index: 2; }
+  .stack-card:nth-child(3) { width: 220px; height: 300px; top: 0;    left: 0;    transform: rotate(-3deg); z-index: 3;
+    background: linear-gradient(135deg, var(--cream-darker, #d4b896) 0%, var(--cream) 100%); }
+  .stack-card-inner { padding: 24px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+  .stack-card-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
+  .stack-card-author { font-family: 'Lora', serif; font-style: italic; font-size: .75rem; color: var(--text-light); margin-top: 5px; }
+  .stack-card-accent { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--green), var(--gold-deep)); margin-bottom: 14px; }
 
-  /* QR box */
-  .qr-box { background:white; border-radius:var(--radius); border:2px solid var(--cream-deeper); padding:16px; text-align:center; margin-bottom:10px; }
-  .qr-eyebrow { font-size:.67rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-light); font-weight:600; margin-bottom:10px; }
-  #qrcode { display:inline-block; line-height:0; border-radius:6px; overflow:hidden; }
-  #qrcode canvas, #qrcode img { display:block; }
-  .amount-pill { display:inline-block; margin-top:10px; background:var(--gold); color:var(--brown-dark); font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; padding:4px 20px; border-radius:20px; border:1.5px solid var(--gold-deep); }
-  .upi-row { margin-top:7px; display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; }
-  .upi-chip { font-size:.7rem; font-family:monospace; background:var(--cream-dark); color:var(--text-mid); padding:3px 10px; border-radius:6px; }
-  .copy-btn { font-size:.67rem; padding:3px 9px; border-radius:6px; border:1px solid var(--cream-deeper); background:white; color:var(--text-mid); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
-  .copy-btn:hover { background:var(--cream-dark); }
-  .app-chips { display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
-  .app-chip { font-size:.63rem; padding:2px 8px; border-radius:8px; background:var(--cream-dark); color:var(--text-mid); border:1px solid var(--cream-deeper); }
+  /* ══════════════════════════════════
+     GIF SHOWCASE
+  ══════════════════════════════════ */
+  .showcase {
+    background: var(--brown-dark);
+    padding: 90px 32px;
+    position: relative; overflow: hidden;
+  }
+  .showcase::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, rgba(246,233,215,.02) 0px, rgba(246,233,215,.02) 1px,
+      transparent 1px, transparent 60px
+    );
+  }
+  .showcase-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .showcase-header { text-align: center; margin-bottom: 56px; }
+  .showcase-eyebrow { font-size: .7rem; text-transform: uppercase; letter-spacing: .16em; color: var(--green); font-weight: 600; margin-bottom: 14px; }
+  .showcase-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900; color: var(--cream); line-height: 1.15;
+  }
+  .showcase-title em { color: var(--gold); font-style: italic; }
+  .showcase-sub { font-family: 'Lora', serif; font-style: italic; font-size: .9rem; color: rgba(246,233,215,.55); margin-top: 12px; }
 
-  /* Info box styles */
-  .info-box { border-radius:var(--radius-sm); padding:13px; margin-bottom:10px; }
-  .info-box.green { background:rgba(107,191,142,.10); border:1.5px solid rgba(107,191,142,.35); }
-  .info-box.gold  { background:rgba(212,168,83,.10);  border:1.5px solid rgba(212,168,83,.38); }
-  .ibox-title { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
-  .ibox-title.green { color:var(--green-dark); }
-  .ibox-title.gold  { color:#a07820; }
-  .ibox-body  { font-size:.75rem; color:var(--text-mid); line-height:1.6; }
-  .ibox-body strong { color:var(--text-dark); }
-  .ibox-where { font-size:.69rem; color:var(--text-light); background:var(--cream-dark); border-radius:6px; padding:7px 10px; line-height:1.7; margin-top:8px; }
+  .gif-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 768px) { .gif-grid { grid-template-columns: 1fr; } }
+  @media (min-width: 769px) and (max-width: 1024px) { .gif-grid { grid-template-columns: 1fr 1fr; } }
 
-  /* Author link */
-  .author-toggle { font-size:.7rem; color:var(--text-light); text-align:center; margin-top:10px; cursor:pointer; text-decoration:underline dotted var(--cream-deeper); transition:color .15s; user-select:none; }
-  .author-toggle:hover { color:var(--brown); }
+  .gif-card {
+    border-radius: 14px; overflow: hidden; position: relative;
+    aspect-ratio: 4/3; background: var(--brown-deep);
+    box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .gif-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,.55); }
+  .gif-card:first-child { grid-column: span 3; aspect-ratio: 16/9; }
+  @media (max-width: 768px) { .gif-card:first-child { grid-column: span 1; aspect-ratio: 4/3; } }
 
-  /* Spinner */
-  .spinner-wrap { text-align:center; padding:28px 0; }
-  .spinner { width:34px; height:34px; border:3px solid var(--cream-deeper); border-top-color:var(--green); border-radius:50%; animation:spin .75s linear infinite; margin:0 auto 12px; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .spinner-label { font-size:.82rem; color:var(--text-mid); }
+  .gif-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .4s ease;
+  }
+  .gif-card:hover img { transform: scale(1.04); }
+  .gif-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(59,32,16,.85) 0%, transparent 50%);
+    display: flex; align-items: flex-end; padding: 18px;
+  }
+  .gif-caption {
+    font-family: 'Playfair Display', serif; font-size: .88rem; font-weight: 600;
+    color: var(--cream); line-height: 1.3;
+  }
+  .gif-caption span { display: block; font-family: 'Lora', serif; font-style: italic; font-size: .72rem; color: rgba(246,233,215,.6); font-weight: 400; margin-top: 2px; }
 
-  /* Success */
-  .success-wrap { text-align:center; padding:18px 0 8px; }
-  .success-emoji { font-size:3rem; animation:pop .35s ease; margin-bottom:8px; }
-  @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.15)} 100%{transform:scale(1)} }
-  .success-title { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text-dark); }
-  .success-sub   { font-size:.76rem; color:var(--text-light); margin-top:4px; }
+  /* ══════════════════════════════════
+     FEATURED BOOKS
+  ══════════════════════════════════ */
+  .books {
+    padding: 100px 32px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 100%);
+  }
+  .books-inner { max-width: 1100px; margin: 0 auto; }
+  .books-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
+  .books-header-text {}
+  .view-all {
+    font-size: .8rem; color: var(--brown); text-decoration: none; font-weight: 500;
+    display: flex; align-items: center; gap: 5px; transition: gap .18s;
+    padding-bottom: 2px; border-bottom: 1px solid var(--brown);
+  }
+  .view-all:hover { gap: 10px; }
 
-  /* Error */
-  .err { font-size:.75rem; color:#a93226; padding:7px 11px; background:#fdf0ee; border-radius:6px; border-left:3px solid #c0392b; margin-bottom:8px; display:none; }
+  .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
 
-  /* Toast */
-  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--brown-dark); color:var(--cream); padding:10px 22px; border-radius:30px; font-size:.82rem; box-shadow:var(--shadow-md); transition:transform .3s ease; z-index:999; white-space:nowrap; pointer-events:none; }
-  #toast.show { transform:translateX(-50%) translateY(0); }
+  .book-card {
+    background: var(--cream); border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(58,28,8,.12), 0 2px 6px rgba(58,28,8,.08);
+    overflow: hidden; transition: transform .22s ease, box-shadow .22s ease;
+    text-decoration: none; display: flex; flex-direction: column;
+  }
+  .book-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 18px 40px rgba(58,28,8,.22); }
+  .book-cover-wrap { position: relative; aspect-ratio: 2/3; overflow: hidden; }
+  .book-cover-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+  .book-card:hover .book-cover-wrap img { transform: scale(1.06); }
+  .book-cover-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--brown), var(--brown-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; color: var(--gold); opacity: .6;
+  }
+  .book-badge {
+    position: absolute; top: 10px; right: 10px;
+    padding: 3px 10px; border-radius: 12px; font-size: .65rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .badge-free { background: var(--green); color: var(--brown-dark); }
+  .badge-paid { background: var(--gold-deep); color: var(--brown-dark); }
+  .book-info { padding: 14px; flex: 1; }
+  .book-title-text {
+    font-family: 'Playfair Display', serif; font-size: .9rem; font-weight: 700;
+    color: var(--text-dark); line-height: 1.35; margin-bottom: 4px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .book-author-text { font-family: 'Lora', serif; font-style: italic; font-size: .72rem; color: var(--text-light); }
+  .book-cta {
+    margin: 0 14px 14px; padding: 8px; border-radius: 8px;
+    background: var(--brown); color: var(--cream);
+    text-align: center; font-size: .78rem; font-weight: 500;
+    border: none; cursor: pointer; transition: background .18s; font-family: 'DM Sans', sans-serif;
+  }
+  .book-cta.free { background: var(--green); color: var(--brown-dark); }
+  .book-cta:hover { filter: brightness(1.1); }
+
+  /* ══════════════════════════════════
+     CONTACT
+  ══════════════════════════════════ */
+  .contact {
+    background: var(--brown-dark); padding: 90px 32px;
+    position: relative; overflow: hidden;
+  }
+  .contact::before {
+    content: '📚'; position: absolute; right: -40px; bottom: -40px;
+    font-size: 220px; opacity: .04; pointer-events: none; transform: rotate(-12deg);
+  }
+  .contact-inner { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+  .contact-eyebrow { font-size: .7rem; text-transform: uppercase; letter-spacing: .16em; color: var(--green); font-weight: 600; margin-bottom: 14px; }
+  .contact-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900; color: var(--cream); line-height: 1.15; margin-bottom: 16px;
+  }
+  .contact-sub { font-family: 'Lora', serif; font-style: italic; font-size: .92rem; color: rgba(246,233,215,.55); margin-bottom: 48px; line-height: 1.7; }
+
+  .contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 48px; }
+  .contact-card {
+    background: rgba(246,233,215,.06); border: 1px solid rgba(246,233,215,.1);
+    border-radius: 14px; padding: 24px; text-align: left;
+    transition: background .2s, border-color .2s;
+  }
+  .contact-card:hover { background: rgba(246,233,215,.10); border-color: rgba(246,233,215,.2); }
+  .contact-card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .contact-card-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text-light); margin-bottom: 5px; }
+  .contact-card-value {
+    font-family: 'DM Sans', sans-serif; font-size: .86rem; color: var(--cream);
+    font-weight: 500; word-break: break-all;
+  }
+  .contact-card-value a { color: var(--gold); text-decoration: none; }
+  .contact-card-value a:hover { text-decoration: underline; }
+
+  .social-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .social-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(246,233,215,.08); border: 1px solid rgba(246,233,215,.15);
+    color: var(--cream); padding: 10px 20px; border-radius: 30px;
+    font-size: .8rem; font-weight: 500; text-decoration: none;
+    transition: all .2s; font-family: 'DM Sans', sans-serif;
+  }
+  .social-btn:hover { background: rgba(246,233,215,.15); border-color: rgba(246,233,215,.3); transform: translateY(-2px); }
+
+  /* ══════════════════════════════════
+     FOOTER
+  ══════════════════════════════════ */
+  .footer {
+    background: #1a0d06; padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    border-top: 1px solid rgba(246,233,215,.06);
+  }
+  .footer-brand { font-family: 'Playfair Display', serif; font-size: .95rem; font-weight: 700; }
+  .footer-brand .live { color: rgba(246,233,215,.5); }
+  .footer-brand .kitaab { color: var(--gold); }
+  .footer-copy { font-size: .72rem; color: rgba(246,233,215,.25); }
+  .footer-links { display: flex; gap: 18px; }
+  .footer-links a { font-size: .72rem; color: rgba(246,233,215,.35); text-decoration: none; transition: color .18s; }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ══════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════ */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+
+  /* ══════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════ */
+  @media (max-width: 600px) {
+    .nav { padding: 0 16px; }
+    .nav-links a:not(.nav-cta) { display: none; }
+    .hero { padding: 90px 20px 70px; }
+    .about, .showcase, .books, .contact { padding: 70px 20px; }
+    .footer { padding: 20px; flex-direction: column; text-align: center; }
+  }
 </style>
 </head>
 <body>
-<div id="app">
 
-  <nav class="topnav">
-    <a class="topnav-brand" href="Main.html">
-      <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Live</span><span style="color:#f7e7b5;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Kitaab</span>
-    </a>
-    <div class="topnav-links">
-      <a href="Main.html">Library</a>
-      <a href="Reader.html">Reader</a>
-      <a href="Account.html" class="btn-account">Account</a>
-    </div>
-  </nav>
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <a class="nav-brand" href="Index.html">
+    <span class="live">Live</span><span class="kitaab">Kitaab</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#books">Books</a>
+    <a href="#contact">Contact</a>
+    <a href="Main.html" class="nav-cta">📖 Start Reading</a>
+  </div>
+</nav>
 
-  <div class="banner">
-    <div class="banner-icon">📖</div>
-    <div class="banner-text">
-      <h1>Discover Your Next Story</h1>
-      <p>Curated fiction — novels, novellas &amp; short stories</p>
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Bengali Books for All Ages</div>
+    <h1 class="hero-title">
+      Stories that live<br>in your <em>heart</em>
+    </h1>
+    <p class="hero-sub">
+      LiveKitaab brings you handpicked Bengali fiction — novels, novellas, and short
+      stories — crafted by talented authors, delivered straight to your screen.
+    </p>
+    <div class="hero-actions">
+      <a href="Main.html" class="btn-primary">📖 Start Reading</a>
+      <a href="#about" class="btn-secondary">Learn More ↓</a>
     </div>
   </div>
+  <div class="hero-scroll">↓ &nbsp; Scroll</div>
+</section>
 
-  <div class="filter-bar">
-    <span class="filter-label">Filter</span>
-    <button class="chip" id="freeChip" onclick="toggleFree()">💎 Free Only</button>
-    <div class="filter-spacer"></div>
-    <span id="statusText">Loading library…</span>
-  </div>
-
-  <div class="tab-strip">
-    <button class="tab-btn active" onclick="switchTab('novels',this)">📖 Novels</button>
-    <button class="tab-btn" onclick="switchTab('novellas',this)">📘 Novellas</button>
-    <button class="tab-btn" onclick="switchTab('shorts',this)">📝 Short Stories</button>
-  </div>
-
-  <div id="panel-novels"   class="tab-panel active"><div class="book-grid" id="grid-novels"></div></div>
-  <div id="panel-novellas" class="tab-panel"><div class="book-grid" id="grid-novellas"></div></div>
-  <div id="panel-shorts"   class="tab-panel"><div class="book-grid" id="grid-shorts"></div></div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════
-     PURCHASE MODAL
-     Panels: pay → utr → verifying → success
-     Author passkey toggles in place of UTR panel
-     ═══════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="purchaseModal">
-  <div class="modal">
-
-    <div class="modal-title" id="pm-title"></div>
-    <div class="modal-sub"   id="pm-sub"></div>
-
-    <!-- Step indicator -->
-    <div class="steps" id="pm-steps">
-      <div class="scol"><div class="sdot on" id="sd1">1</div><div class="slabel">Pay</div></div>
-      <div class="sline" id="sl1"></div>
-      <div class="scol"><div class="sdot"    id="sd2">2</div><div class="slabel">Confirm</div></div>
-      <div class="sline" id="sl2"></div>
-      <div class="scol"><div class="sdot"    id="sd3">3</div><div class="slabel">Read</div></div>
-    </div>
-
-    <!-- ── PANEL 1: QR PAYMENT ─────────────────────── -->
-    <div id="pp-pay">
-      <div class="qr-box">
-        <div class="qr-eyebrow">📷 Open your UPI app → Scan QR → Pay</div>
-        <div id="qrcode"></div>
-        <div class="amount-pill" id="pm-amount">₹–</div>
-        <div class="upi-row">
-          <span class="upi-chip" id="pm-upi-text"></span>
-          <button class="copy-btn" onclick="copyUPI()">Copy</button>
-        </div>
-        <div class="app-chips">
-          <span class="app-chip">GPay</span>
-          <span class="app-chip">PhonePe</span>
-          <span class="app-chip">Paytm</span>
-          <span class="app-chip">BHIM</span>
-          <span class="app-chip">Any UPI</span>
-        </div>
-      </div>
-      <p style="font-size:.75rem;color:var(--text-mid);text-align:center;line-height:1.6;margin-bottom:4px;">
-        After paying, tap <strong>I've Paid →</strong> and enter your Transaction ID.
+<!-- ══ ABOUT ══ -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-text">
+      <div class="section-eyebrow reveal">Who We Are</div>
+      <h2 class="section-title reveal reveal-delay-1">
+        A home for <em>Bengali</em><br>storytelling
+      </h2>
+      <p class="section-body reveal reveal-delay-2">
+        LiveKitaab is a digital library dedicated to Bengali literature — from timeless
+        classics to bold new voices. We believe great stories should be accessible to
+        everyone, at any age, on any device.
       </p>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeModal('purchaseModal')">Cancel</button>
-        <button class="btn btn-green" onclick="showPanel('utr')">I've Paid →</button>
-      </div>
-      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
-    </div>
-
-    <!-- ── PANEL 2: UTR ENTRY ──────────────────────── -->
-    <div id="pp-utr" style="display:none">
-      <div class="info-box green">
-        <div class="ibox-title green">✅ Enter your Transaction ID (UTR)</div>
-        <div class="ibox-body">
-          Every UPI payment gives you a <strong>Transaction / Reference ID</strong>.
-          Enter it below — it proves your payment went through.
-          <div class="ibox-where">
-            <strong>Where to find it:</strong><br>
-            • <strong>GPay</strong> → tap the payment → "Transaction ID"<br>
-            • <strong>PhonePe</strong> → History → tap payment → "UTR No."<br>
-            • <strong>Paytm</strong> → Passbook → tap payment → "Bank Ref. No"<br>
-            • <strong>BHIM / others</strong> → History → tap transaction
+      <p class="section-body reveal reveal-delay-2">
+        <!-- ADD YOUR CUSTOM ABOUT TEXT HERE -->
+        Our carefully curated collection spans novels, novellas, and short stories, each
+        one chosen for its ability to transport, inspire, and move you.
+      </p>
+      <div class="about-features">
+        <div class="feature-row reveal reveal-delay-3">
+          <div class="feature-icon">📱</div>
+          <div>
+            <div class="feature-text-title">Read Anywhere</div>
+            <div class="feature-text-body">Works on any phone, tablet, or computer — no app download needed.</div>
+          </div>
+        </div>
+        <div class="feature-row reveal reveal-delay-4">
+          <div class="feature-icon">✍️</div>
+          <div>
+            <div class="feature-text-title">Supporting Authors</div>
+            <div class="feature-text-body">Every purchase directly supports the Bengali authors who wrote it.</div>
           </div>
         </div>
       </div>
-      <input class="field" id="pm-utr" type="text"
-             placeholder="e.g. 421831092847"
-             maxlength="22" autocomplete="off"
-             oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'').toUpperCase()"
-             onkeydown="if(event.key==='Enter')verifyUTR()">
-      <div class="err" id="utr-err"></div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
-        <button class="btn btn-green" onclick="verifyUTR()">Verify &amp; Unlock →</button>
-      </div>
-      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
     </div>
 
-    <!-- ── PANEL 3: VERIFYING ──────────────────────── -->
-    <div id="pp-verifying" style="display:none">
-      <div class="spinner-wrap">
-        <div class="spinner"></div>
-        <div class="spinner-label">Verifying payment…</div>
-      </div>
-    </div>
-
-    <!-- ── PANEL 4: SUCCESS ────────────────────────── -->
-    <div id="pp-success" style="display:none">
-      <div class="success-wrap">
-        <div class="success-emoji">🎉</div>
-        <div class="success-title">Payment Verified!</div>
-        <div class="success-sub">Opening your book…</div>
-      </div>
-    </div>
-
-    <!-- ── PANEL 5: AUTHOR PASSKEY ─────────────────── -->
-    <div id="pp-author" style="display:none">
-      <div class="info-box gold">
-        <div class="ibox-title gold">✍️ Author Passkey</div>
-        <div class="ibox-body">
-          Enter the passkey you received from the Livekitaab team when your book was published.
-          This unlocks the book for you at no charge.
+    <div class="about-visual reveal reveal-delay-2">
+      <div class="about-card-stack">
+        <div class="stack-card">
+          <div class="stack-card-inner">
+            <div class="stack-card-accent"></div>
+            <div class="stack-card-title">Poripati Jontrer Songsar</div>
+            <div class="stack-card-author">Shubhankar Babu</div>
+          </div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-card-inner">
+            <div class="stack-card-accent"></div>
+            <div class="stack-card-title">Ek Muhurter Sporsho</div>
+            <div class="stack-card-author">Shubhankar Babu</div>
+          </div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-card-inner" style="background: linear-gradient(135deg,#f6e9d7,#ecdcc4);">
+            <div class="stack-card-accent"></div>
+            <div class="stack-card-title" style="color:#3b2010;">Ordhek Payer Chap</div>
+            <div class="stack-card-author">Panpriya Nandi</div>
+          </div>
         </div>
       </div>
-      <input class="field" id="pm-authorkey" type="text"
-             placeholder="Your author passkey…"
-             autocomplete="off"
-             onkeydown="if(event.key==='Enter')verifyAuthorKey()">
-      <div class="err" id="author-err"></div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
-        <button class="btn btn-gold"  onclick="verifyAuthorKey()">🔓 Unlock as Author</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GIF SHOWCASE ══ -->
+<section class="showcase" id="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-header">
+      <div class="showcase-eyebrow reveal">Inside LiveKitaab</div>
+      <h2 class="showcase-title reveal reveal-delay-1">
+        Reading, <em>reimagined</em>
+      </h2>
+      <p class="showcase-sub reveal reveal-delay-2">
+        See how our books come alive with animations, music, and beautiful typography.
+      </p>
+    </div>
+
+    <div class="gif-grid">
+      <!-- REPLACE src="" with your actual GIF URLs -->
+      <div class="gif-card reveal">
+        <img src="YOUR_MAIN_GIF_URL_HERE" alt="LiveKitaab reading experience"
+             onerror="this.src='https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80'">
+        <div class="gif-overlay">
+          <div class="gif-caption">
+            The Reading Experience
+            <span>Beautiful typography meets immersive storytelling</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURED BOOKS ══ -->
+<section class="books" id="books">
+  <div class="books-inner">
+    <div class="books-header">
+      <div>
+        <div class="section-eyebrow reveal">Our Collection</div>
+        <h2 class="section-title reveal reveal-delay-1">Featured <em>Books</em></h2>
+      </div>
+      <a href="Main.html" class="view-all reveal">View full library →</a>
+    </div>
+
+    <div class="books-grid" id="featuredGrid">
+      <!-- Loaded from library.json, falls back to static cards -->
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-eyebrow reveal">Get in Touch</div>
+    <h2 class="contact-title reveal reveal-delay-1">We'd love to<br><em>hear from you</em></h2>
+    <p class="contact-sub reveal reveal-delay-2">
+      Questions about a book? Want to publish with us? Or just want to say hello —
+      we're always happy to hear from readers and authors alike.
+    </p>
+
+    <div class="contact-cards reveal reveal-delay-2">
+      <!-- REPLACE with your actual email addresses -->
+      <div class="contact-card">
+        <div class="contact-card-icon">📧</div>
+        <div class="contact-card-label">General Enquiries</div>
+        <div class="contact-card-value">
+          <a href="mailto:acjee2059@gmail.com">acjee2059@gmail.com</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">✍️</div>
+        <div class="contact-card-label">Authors & Publishing</div>
+        <div class="contact-card-value">
+          <a href="mailto:authors@livekitaab.com">authors@livekitaab.com</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">🛠</div>
+        <div class="contact-card-label">Support</div>
+        <div class="contact-card-value">
+          <a href="mailto:support@livekitaab.com">support@livekitaab.com</a>
+        </div>
       </div>
     </div>
 
+    <!-- REPLACE href="#" with your actual social media URLs -->
+    <div class="social-row reveal reveal-delay-3">
+      <a href="#" class="social-btn">📘 Facebook</a>
+      <a href="#" class="social-btn">📸 Instagram</a>
+      <a href="#" class="social-btn">🐦 Twitter / X</a>
+      <a href="#" class="social-btn">▶ YouTube</a>
+    </div>
   </div>
-</div>
+</section>
 
-<div id="toast"></div>
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-brand">
+    <span class="live">Live</span><span class="kitaab">Kitaab</span>
+  </div>
+  <div class="footer-copy">© 2026 LiveKitaab. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="Main.html">Library</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════════════════════════
+// ══ LIBRARY_URL — same as your Main.html ══
 const LIBRARY_URL = 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json';
-const API_URL     = 'https://web-production-a6ac9.up.railway.app';
 
-// ═══════════════════════════════════════════════════════════
-//  FALLBACK (matches your real library.json structure)
-// ═══════════════════════════════════════════════════════════
-const FALLBACK_BOOKS = [
-  { id:'somoyer', title:'Somoyer Chabikathi', type:'novel', price:0, author:'Team Livekitaab',
-    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png',
-    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/Test.clbk',
-    upi_id:'arohanchatterjee881@okicici', author_key:'LIVEKITAAB-SOMOYER-2024' },
-  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap', type:'novella', price:30, author:'Panpriyo Nondi',
-    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png',
-    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
-    upi_id:'arohanchatterjee881@okicici', author_key:'NONDI-PAYER-CHAP-2024' },
-  { id:'Ek_Muhurter_Sporsho', title:'Ek Muhurter Sporsho', type:'short_story', price:1, author:'Shubhankar Babu',
-    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png',
-    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/EMS.lbk',
-    upi_id:'arohanchatterjee881@okicici', author_key:'BABU-EMS-2024' },
-  { id:'Jontrer_Songsar', title:'Poripati Jontrer Songsar', type:'short_story', price:1, author:'Shubhankar Babu',
-    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png',
-    file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
-    upi_id:'arohanchatterjee881@okicici', author_key:'BABU-JS-2024' }
+// ══ FALLBACK BOOKS (shown if fetch fails) ══
+const FALLBACK = [
+  { id:'somoyer',           title:'Somoyer Chabikathi',    author:'Team Livekitaab', price:0,  type:'novel',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png' },
+  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap',     author:'Panpriya Nandi',  price:30, type:'novella',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png' },
+  { id:'Ek_Muhurter_Sporsho',title:'Ek Muhurter Sporsho',  author:'Shubhankar Babu', price:10, type:'short_story',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png' },
+  { id:'Jontrer_Songsar',   title:'Poripati Jontrer Songsar',author:'Shubhankar Babu',price:10,type:'short_story',
+    cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png' },
 ];
 
-// ═══════════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════════
-let allBooks    = [];
-let filterFree  = false;
-let pendingBook = null;
-let ownedIds    = JSON.parse(localStorage.getItem('lk_owned') || '[]');
-let usedUTRs    = JSON.parse(localStorage.getItem('lk_utrs')  || '[]');
-
-// ═══════════════════════════════════════════════════════════
-//  NAV
-// ═══════════════════════════════════════════════════════════
-const _base = (() => { const p=window.location.pathname; return p.substring(0,p.lastIndexOf('/')); })();
-function nav(page) { window.location.href = _base+'/'+page; }
-
-// ═══════════════════════════════════════════════════════════
-//  BOOT
-// ═══════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', async () => {
+// ══ LOAD FEATURED BOOKS ══
+async function loadFeatured() {
+  let books = FALLBACK;
   try {
     const r = await fetch(LIBRARY_URL);
     const j = await r.json();
-    allBooks = j.books || FALLBACK_BOOKS;
-  } catch { allBooks = FALLBACK_BOOKS; }
-  renderLibrary();
-});
+    if (j.books && j.books.length) books = j.books;
+  } catch { /* use fallback */ }
 
-// ═══════════════════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════════════════
-function renderLibrary() {
-  const map = { novels:'novel', novellas:'novella', shorts:'short_story' };
-  let shown = 0;
-  for (const [key, type] of Object.entries(map)) {
-    const grid = document.getElementById('grid-'+key);
-    const list = allBooks.filter(b => b.type===type && (!filterFree || b.price===0));
-    grid.innerHTML = '';
-    if (!list.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span>🌿</span>No ${key} found.</div>`;
-    } else {
-      list.forEach(b => grid.appendChild(makeCard(b)));
-      shown += list.length;
-    }
-  }
-  document.getElementById('statusText').textContent =
-    `${shown} book${shown!==1?'s':''} available${filterFree?' (free only)':''}`;
+  // Show up to 4 books
+  const grid = document.getElementById('featuredGrid');
+  grid.innerHTML = '';
+  books.slice(0, 4).forEach((book, i) => {
+    const card = makeBookCard(book, i);
+    grid.appendChild(card);
+  });
 }
 
-function makeCard(book) {
-  const owned  = ownedIds.includes(book.id);
+function makeBookCard(book, i) {
   const isFree = book.price === 0;
-  const hasFile= !!(book.file);
-  const canRead= hasFile && (isFree || owned);
+  const a = document.createElement('a');
+  a.href = 'Main.html';
+  a.className = 'book-card reveal' + (i > 0 ? ` reveal-delay-${Math.min(i,4)}` : '');
 
-  const card = document.createElement('div');
-  card.className = 'book-card';
+  const coverHtml = book.cover
+    ? `<img src="${esc(book.cover)}" alt="${esc(book.title)}" loading="lazy"
+            onerror="this.parentElement.innerHTML='<div class=\\'book-cover-placeholder\\'>📕</div>'">`
+    : `<div class="book-cover-placeholder">📕</div>`;
 
-  // Cover
-  const cw = document.createElement('div'); cw.className = 'cover-wrap';
-  if (book.cover) {
-    const img = document.createElement('img');
-    img.className='book-cover'; img.src=book.cover; img.alt=book.title; img.loading='lazy';
-    img.onerror = () => { cw.innerHTML='<div class="book-cover-placeholder">📕</div>'; };
-    cw.appendChild(img);
-  } else { cw.innerHTML='<div class="book-cover-placeholder">📕</div>'; }
-  const badge = document.createElement('span');
-  badge.className = 'book-badge '+(isFree?'badge-free':'badge-paid');
-  badge.textContent = isFree ? 'Free' : '₹'+book.price;
-  cw.appendChild(badge);
-
-  // Info
-  const info = document.createElement('div'); info.className='book-info';
-  info.innerHTML = `<div class="book-title">${esc(book.title)}</div><div class="book-author">${esc(book.author||'')}</div>`;
-
-  // Action button
-  const ac = document.createElement('div'); ac.className='book-action';
-  const btn = document.createElement('button'); btn.className='btn';
-  if (canRead) {
-    btn.className+=' btn-read'; btn.innerHTML='📖 Read'; btn.onclick=()=>openReader(book);
-  } else if (!isFree && !owned) {
-    btn.className+=' btn-buy'; btn.innerHTML=`🛒 Buy ₹${book.price}`; btn.onclick=()=>openPurchase(book);
-  } else {
-    btn.className+=' btn-muted'; btn.innerHTML='Coming Soon'; btn.disabled=true; btn.style.opacity='.5'; btn.style.cursor='default';
-  }
-  ac.appendChild(btn);
-
-  card.appendChild(cw); card.appendChild(info); card.appendChild(ac);
-  return card;
+  a.innerHTML = `
+    <div class="book-cover-wrap">
+      ${coverHtml}
+      <span class="book-badge ${isFree ? 'badge-free' : 'badge-paid'}">
+        ${isFree ? 'Free' : '₹' + book.price}
+      </span>
+    </div>
+    <div class="book-info">
+      <div class="book-title-text">${esc(book.title)}</div>
+      <div class="book-author-text">${esc(book.author || '')}</div>
+    </div>
+    <button class="book-cta ${isFree ? 'free' : ''}">
+      ${isFree ? '📖 Read Free' : '🛒 Buy ₹' + book.price}
+    </button>
+  `;
+  return a;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  TABS / FILTER
-// ═══════════════════════════════════════════════════════════
-function switchTab(key, el) {
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-'+key).classList.add('active');
-}
-function toggleFree() {
-  filterFree = !filterFree;
-  const c = document.getElementById('freeChip');
-  c.classList.toggle('active', filterFree);
-  c.textContent = filterFree ? '✨ Show All' : '💎 Free Only';
-  renderLibrary();
-}
-
-// ═══════════════════════════════════════════════════════════
-//  OPEN PURCHASE MODAL
-// ═══════════════════════════════════════════════════════════
-function openPurchase(book) {
-  pendingBook = book;
-  document.getElementById('pm-title').textContent = book.title;
-  document.getElementById('pm-sub').textContent   = `₹${book.price} · one-time purchase`;
-
-  const upiId  = book.upi_id || 'yourname@upi';
-  const amount = book.price;
-
-  // UPI URL — ONLY used inside the QR image, never as a page redirect
-  const upiUrl = `upi://pay?pa=${enc(upiId)}&pn=${enc('Livekitaab')}&am=${amount}&cu=INR&tn=${enc('Livekitaab: '+book.title)}`;
-
-  document.getElementById('pm-amount').textContent   = `₹${amount}`;
-  document.getElementById('pm-upi-text').textContent = upiId;
-
-  // Draw QR
-  const el = document.getElementById('qrcode');
-  el.innerHTML = '';
-  new QRCode(el, { text:upiUrl, width:172, height:172, colorDark:'#3b2010', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
-
-  showPanel('pay');
-  openModal('purchaseModal');
-}
-
-// ═══════════════════════════════════════════════════════════
-//  PANEL SYSTEM
-//  Panels: pay | utr | verifying | success | author
-// ═══════════════════════════════════════════════════════════
-const PANELS = ['pay','utr','verifying','success','author'];
-
-function showPanel(name) {
-  PANELS.forEach(p => document.getElementById('pp-'+p).style.display = 'none');
-  document.getElementById('pp-'+name).style.display = 'block';
-  document.getElementById('pm-steps').style.display = ['verifying','success','author'].includes(name) ? 'none' : 'flex';
-
-  // Step dot states
-  const states = { pay:[1,[],[]], utr:[2,[1],[]], verifying:[3,[1,2],[]], success:[null,[1,2,3],[]] };
-  const s = states[name];
-  if (s) {
-    [1,2,3].forEach(i => {
-      const d = document.getElementById('sd'+i);
-      if (s[2].includes(i))      { d.className='sdot ok';  d.textContent='✓'; }
-      else if (s[0]===i)         { d.className='sdot on';  d.textContent=i; }
-      else                       { d.className='sdot';     d.textContent=i; }
-    });
-    document.getElementById('sl1').className = 'sline'+(s[1].includes(1)?' ok':'');
-    document.getElementById('sl2').className = 'sline'+(s[1].includes(2)?' ok':'');
-  }
-
-  // Auto-focus inputs
-  if (name==='utr')    { document.getElementById('pm-utr').value='';       document.getElementById('utr-err').style.display='none';    setTimeout(()=>document.getElementById('pm-utr').focus(),60); }
-  if (name==='author') { document.getElementById('pm-authorkey').value=''; document.getElementById('author-err').style.display='none'; setTimeout(()=>document.getElementById('pm-authorkey').focus(),60); }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  UTR VERIFICATION
-//
-//  Your Railway backend should handle:
-//  POST /verify-utr
-//  Body: { utr, book_id, amount, upi_id }
-//  Return: { verified: true } or { verified: false, reason: "..." }
-//
-//  If the endpoint isn't ready yet, see the catch block below —
-//  UTRs are logged to /log-utr for manual admin approval.
-// ═══════════════════════════════════════════════════════════
-async function verifyUTR() {
-  const utr   = document.getElementById('pm-utr').value.trim().toUpperCase();
-  const errEl = document.getElementById('utr-err');
-  errEl.style.display = 'none';
-
-  if (utr.length < 10) {
-    errEl.textContent = 'Please enter a valid Transaction ID (at least 10 characters).';
-    errEl.style.display = 'block'; return;
-  }
-  if (usedUTRs.includes(utr)) {
-    errEl.textContent = 'This Transaction ID has already been used.';
-    errEl.style.display = 'block'; return;
-  }
-
-  showPanel('verifying');
-
-  try {
-    const res  = await fetch(`${API_URL}/verify-utr`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id })
-    });
-    const data = await res.json();
-
-    if (data.verified) {
-      usedUTRs.push(utr);
-      localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
-      unlockBook(pendingBook);
-    } else {
-      showPanel('utr');
-      const e = document.getElementById('utr-err');
-      e.textContent = data.reason || 'Payment not found. Please double-check your Transaction ID.';
-      e.style.display = 'block';
+// ══ SCROLL REVEAL ══
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
     }
-  } catch {
-    // Backend not reachable — log UTR for manual review, optimistically unlock
-    try {
-      fetch(`${API_URL}/log-utr`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ utr, book_id:pendingBook.id, amount:pendingBook.price, upi_id:pendingBook.upi_id, ts:new Date().toISOString() })
-      });
-    } catch {}
-    usedUTRs.push(utr);
-    localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
-    unlockBook(pendingBook);
-  }
+  });
+}, { threshold: 0.12 });
+
+function attachObservers() {
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-// ═══════════════════════════════════════════════════════════
-//  AUTHOR PASSKEY
-//
-//  How to set up:
-//  In library.json, add to any book:
-//    "author_key": "WHATEVER-YOU-CHOOSE"
-//  Give that exact string to the author.
-//  They type it here → instant free unlock.
-//  Change the key anytime by updating library.json.
-// ═══════════════════════════════════════════════════════════
-function verifyAuthorKey() {
-  const input  = document.getElementById('pm-authorkey').value.trim();
-  const errEl  = document.getElementById('author-err');
-  errEl.style.display = 'none';
-
-  if (!input) {
-    errEl.textContent = 'Please enter your author passkey.';
-    errEl.style.display = 'block'; return;
-  }
-
-  // Simple direct string comparison — no hashing, no external tools
-  const correct = pendingBook.author_key || '';
-
-  if (!correct) {
-    errEl.textContent = 'No author passkey has been set for this book yet. Contact the Livekitaab team.';
-    errEl.style.display = 'block'; return;
-  }
-
-  if (input === correct) {
-    unlockBook(pendingBook);
-  } else {
-    errEl.textContent = 'Incorrect passkey. Check for typos, or contact the Livekitaab team.';
-    errEl.style.display = 'block';
-    document.getElementById('pm-authorkey').select();
-  }
+// ══ HELPERS ══
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ═══════════════════════════════════════════════════════════
-//  UNLOCK
-// ═══════════════════════════════════════════════════════════
-function unlockBook(book) {
-  if (!ownedIds.includes(book.id)) {
-    ownedIds.push(book.id);
-    localStorage.setItem('lk_owned', JSON.stringify(ownedIds));
-  }
-  showPanel('success');
-  renderLibrary();
-  setTimeout(() => { closeModal('purchaseModal'); openReader(book); }, 1500);
-}
-
-// ═══════════════════════════════════════════════════════════
-//  READER
-// ═══════════════════════════════════════════════════════════
-const CORS_PROXY = 'https://your-proxy.YOUR-SUBDOMAIN.workers.dev';
-
-function normaliseLbkUrl(url) {
-  if (!url) return url;
-  if (/raw\.githubusercontent\.com/i.test(url)) return url;
-  const m = url.match(/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/i);
-  if (m) return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
-  if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
-    const ok = CORS_PROXY && !CORS_PROXY.includes('YOUR-SUBDOMAIN');
-    return ok ? `${CORS_PROXY}?url=${enc(url)}` : url;
-  }
-  return url;
-}
-
-function openReader(book) {
-  const file = normaliseLbkUrl(book.file || '');
-  sessionStorage.setItem('pending_book', JSON.stringify({...book, file: file||book.file}));
-  nav('Reader.html');
-}
-
-// ═══════════════════════════════════════════════════════════
-//  COPY UPI ID
-// ═══════════════════════════════════════════════════════════
-function copyUPI() {
-  const id = document.getElementById('pm-upi-text').textContent;
-  navigator.clipboard.writeText(id).then(()=>toast('UPI ID copied!')).catch(()=>{});
-}
-
-// ═══════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-let _tt;
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(_tt); _tt = setTimeout(()=>t.classList.remove('show'), 2600);
-}
-
-function enc(s) { return encodeURIComponent(s); }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// ══ BOOT ══
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadFeatured();
+  attachObservers();
+});
 </script>
 </body>
 </html>
