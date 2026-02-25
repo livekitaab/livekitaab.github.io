@@ -335,8 +335,16 @@ const MusicObserver = new IntersectionObserver((entries) => {
 
 // ═══════════════════════════════════════════════════════════
 //  LBK / CLBK PARSER
+//
+//  CLBK lazy loading strategy:
+//  1. Fetch the full .clbk ZIP once
+//  2. Read manifest.json to get chapter list
+//  3. Render chapter 1 immediately from the already-downloaded ZIP
+//  4. Render remaining chapters in the background, one by one
+//  This avoids re-fetching the file but still unblocks the UI fast.
 // ═══════════════════════════════════════════════════════════
 const LBKReader = {
+  // Parse a single .lbk ZIP buffer → { content, assets }
   async parseLBK(arrayBuffer) {
     const zip  = await JSZip.loadAsync(arrayBuffer);
     const json = await zip.file('content.json').async('string');
@@ -349,18 +357,24 @@ const LBKReader = {
     return { content, assets };
   },
 
-  async parseCLBK(arrayBuffer) {
+  // Read manifest only — returns { meta, chapters: [{filename, title, order}] }
+  async readManifest(arrayBuffer) {
     const zip = await JSZip.loadAsync(arrayBuffer);
     const manifest = JSON.parse(await zip.file('manifest.json').async('string'));
-    const chapters = [];
     const sorted = (manifest.chapters || []).slice().sort((a, b) => a.order - b.order);
-    for (const ch of sorted) {
-      const entry = zip.file(ch.filename);
-      if (!entry) continue;
-      const { content, assets } = await LBKReader.parseLBK(await entry.async('arraybuffer'));
-      chapters.push({ title: ch.title || content.meta?.title || ch.filename, content, assets });
-    }
-    return { meta: manifest.meta, chapters };
+    return { meta: manifest.meta, chapters: sorted, zip };
+  },
+
+  // Parse one chapter entry from an already-open CLBK zip
+  async parseChapterFromZip(zip, chapterMeta) {
+    const entry = zip.file(chapterMeta.filename);
+    if (!entry) throw new Error('Chapter file not found: ' + chapterMeta.filename);
+    const buf = await entry.async('arraybuffer');
+    const { content, assets } = await LBKReader.parseLBK(buf);
+    return {
+      title: chapterMeta.title || content.meta?.title || chapterMeta.filename,
+      content, assets
+    };
   },
 };
 
@@ -370,6 +384,7 @@ const LBKReader = {
 const Renderer = {
   fontScale: 1.0, chapters: [], musicAudios: [],
 
+  // Render all chapters at once (used for .lbk single files)
   renderBook(data, isClbk) {
     const container = document.getElementById('readerContent');
     container.innerHTML = ''; container.style.display = 'block';
@@ -385,6 +400,41 @@ const Renderer = {
     });
     this.buildChapterList();
     this.applyFontScale();
+  },
+
+  // Render the very first chapter and show it immediately
+  renderFirstChapter(ch) {
+    const container = document.getElementById('readerContent');
+    container.innerHTML = ''; container.style.display = 'block';
+    this.chapters = []; this.stopAllMusic();
+    const card = this.renderChapter(ch, 0);
+    container.appendChild(card);
+    this.chapters.push({ title: ch.title, el: card });
+    this.buildChapterList();
+    this.applyFontScale();
+  },
+
+  // Append one more chapter (called in background for chapters 2+)
+  appendChapter(ch) {
+    const container = document.getElementById('readerContent');
+    const idx = this.chapters.length;
+    const divider = document.createElement('div');
+    divider.className = 'chapter-divider';
+    container.appendChild(divider);
+    const card = this.renderChapter(ch, idx);
+    // Reveal smoothly
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    container.appendChild(card);
+    this.chapters.push({ title: ch.title, el: card });
+    this.buildChapterList();
+    this.applyFontScale();
+    // Animate in
+    requestAnimationFrame(() => {
+      card.style.transition = 'opacity .4s ease, transform .4s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    });
   },
 
   renderChapter({ title, content, assets }, idx) {
@@ -492,26 +542,65 @@ const Renderer = {
 
 // ═══════════════════════════════════════════════════════════
 //  FILE LOADING
+//
+//  For .lbk: parse and render all at once (single chapter)
+//  For .clbk: parse manifest → render ch1 immediately →
+//             load remaining chapters in background one by one
 // ═══════════════════════════════════════════════════════════
 async function loadFile(arrayBuffer, filename) {
   showLoader(true);
   try {
     const lower = filename.toLowerCase();
-    let bookData, isClbk = lower.endsWith('.clbk');
-    if (isClbk) {
-      bookData = await LBKReader.parseCLBK(arrayBuffer);
-      document.getElementById('readerBookTitle').textContent = bookData.meta?.title || filename;
+
+    if (lower.endsWith('.clbk')) {
+      // ── LAZY CLBK LOADING ──
+      const { meta, chapters, zip } = await LBKReader.readManifest(arrayBuffer);
+      document.getElementById('readerBookTitle').textContent = meta?.title || filename;
+
+      if (!chapters.length) throw new Error('No chapters found in book.');
+
+      // Render chapter 1 immediately
+      const firstCh = await LBKReader.parseChapterFromZip(zip, chapters[0]);
+      document.getElementById('loadingState').style.display = 'none';
+      showLoader(false);
+      Renderer.renderFirstChapter(firstCh);
+      showToast('📖 ' + (meta?.title || filename));
+
+      // Load remaining chapters in background
+      if (chapters.length > 1) {
+        loadRemainingChapters(zip, chapters.slice(1));
+      }
+
     } else {
-      bookData = await LBKReader.parseLBK(arrayBuffer);
+      // ── SINGLE LBK ──
+      const bookData = await LBKReader.parseLBK(arrayBuffer);
       document.getElementById('readerBookTitle').textContent = bookData.content?.meta?.title || filename;
+      document.getElementById('loadingState').style.display = 'none';
+      Renderer.renderBook(bookData, false);
+      showToast('📖 Book loaded');
     }
-    document.getElementById('loadingState').style.display = 'none';
-    Renderer.renderBook(bookData, isClbk);
-    showToast('📖 Book loaded');
   } catch (e) {
     console.error(e);
     showToast('⚠ Could not load file: ' + e.message);
-  } finally { showLoader(false); }
+    document.getElementById('loadingState').style.display = 'block';
+  } finally {
+    showLoader(false);
+  }
+}
+
+// Load chapters 2..N one at a time in the background
+async function loadRemainingChapters(zip, remaining) {
+  for (const chMeta of remaining) {
+    try {
+      // Small yield so UI stays responsive between chapters
+      await new Promise(r => setTimeout(r, 80));
+      const ch = await LBKReader.parseChapterFromZip(zip, chMeta);
+      Renderer.appendChapter(ch);
+    } catch (e) {
+      console.warn('Could not load chapter:', chMeta.filename, e);
+      // Don't block — skip bad chapter and continue
+    }
+  }
 }
 
 function handleFileInput(input) {
