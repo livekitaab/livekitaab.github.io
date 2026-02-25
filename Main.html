@@ -417,9 +417,9 @@ function renderLibrary() {
 
 function makeCard(book) {
   const owned  = ownedIds.includes(book.id);
-  const isFree = book.price === 0;
-  const hasFile= !!(book.file);
-  const canRead= hasFile && (isFree || owned);
+  const isFree  = book.price === 0;
+  const hasFile = !!(book.file || book.chapters);
+  const canRead = hasFile && (isFree || owned);
 
   const card = document.createElement('div');
   card.className = 'book-card';
@@ -683,8 +683,18 @@ function normaliseLbkUrl(url) {
 }
 
 function openReader(book) {
-  const file = normaliseLbkUrl(book.file || '');
-  sessionStorage.setItem('pending_book', JSON.stringify({...book, file: file||book.file}));
+  // For chapter-based books, pass chapters URL through unchanged.
+  // For single-file books, normalise the file URL.
+  const payload = { ...book };
+  if (book.chapters) {
+    payload.chapters = book.chapters; // chapters.json URL
+    delete payload.file;
+  } else {
+    const file = normaliseLbkUrl(book.file || '');
+    payload.file = file || book.file;
+    delete payload.chapters;
+  }
+  sessionStorage.setItem('pending_book', JSON.stringify(payload));
   nav('Reader.html');
 }
 
