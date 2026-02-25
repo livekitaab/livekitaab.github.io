@@ -209,6 +209,46 @@
     white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Next Chapter Button ── */
+  .next-chapter-wrap {
+    max-width: 680px; margin: 0 auto 32px;
+    width: calc(100% - 24px); text-align: center;
+  }
+  @media (max-width: 600px) { .next-chapter-wrap { width: calc(100% - 16px); margin: 0 8px 24px; } }
+  .next-chapter-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: var(--brown-dark); border: none; border-radius: 50px;
+    padding: 14px 32px; font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(107,191,142,.35);
+    transition: all .22s; width: 100%; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .next-chapter-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(107,191,142,.45); }
+  .next-chapter-btn:active { transform: translateY(0); }
+  .next-chapter-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  .next-chapter-btn .btn-spinner {
+    width: 16px; height: 16px; border: 2px solid rgba(59,32,16,.3);
+    border-top-color: var(--brown-dark); border-radius: 50%;
+    animation: spin .7s linear infinite; display: none;
+  }
+  .next-chapter-btn.loading .btn-spinner { display: block; }
+  .next-chapter-btn.loading .btn-arrow { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .end-of-book {
+    max-width: 680px; margin: 0 auto 40px;
+    width: calc(100% - 24px);
+    text-align: center; padding: 28px;
+    background: var(--cream); border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 600px) { .end-of-book { width: calc(100% - 16px); margin: 0 8px 32px; } }
+  .end-of-book-icon { font-size: 2rem; margin-bottom: 8px; }
+  .end-of-book-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--brown-deep); margin-bottom: 6px; }
+  .end-of-book-sub { font-family: 'Lora', serif; font-style: italic; font-size: .8rem; color: var(--text-light); }
 </style>
 </head>
 <body>
@@ -560,16 +600,25 @@ const Renderer = {
 //  FILE LOADING
 //
 //  Two entry points:
-//  A) loadFromChaptersJson(url)  — for multi-chapter books
-//     fetches chapters.json, renders ch1, loads rest in bg
-//  B) loadFile(arrayBuffer, filename) — for local file open
-//     or single .lbk books
+//  A) loadFromChaptersJson(url) — multi-chapter books
+//     Loads chapter 1 only. Shows "Next Chapter" button at
+//     the end. Each chapter loads only when user taps the button.
+//  B) loadFile(arrayBuffer, filename) — single .lbk books
 // ═══════════════════════════════════════════════════════════
 
-// Entry point A — used by the boot section when book.chapters is set
+// Chapter queue state
+let _chapterQueue   = [];   // remaining chapter metas [{title, file, order}]
+let _chapterIndex   = 1;    // how many chapters loaded so far
+let _loadingChapter = false;
+
+// Entry point A — multi-chapter books via chapters.json
 async function loadFromChaptersJson(chaptersJsonUrl, bookTitle) {
   showLoader(true);
   document.getElementById('loadingState').style.display = 'none';
+  _chapterQueue   = [];
+  _chapterIndex   = 1;
+  _loadingChapter = false;
+
   try {
     const { meta, chapters } = await LBKReader.fetchChapterList(chaptersJsonUrl);
     const title = bookTitle || meta?.title || 'Book';
@@ -578,20 +627,21 @@ async function loadFromChaptersJson(chaptersJsonUrl, bookTitle) {
     if (!chapters.length) throw new Error('No chapters found.');
 
     // Fetch and render chapter 1 immediately
-    const ch1 = await LBKReader.fetchLBK(chapters[0].file);
-    const firstChapter = {
-      title: chapters[0].title || ch1.content?.meta?.title || 'Chapter 1',
-      content: ch1.content,
-      assets: ch1.assets
+    const ch1Data = await LBKReader.fetchLBK(chapters[0].file);
+    const ch1 = {
+      title:   chapters[0].title || ch1Data.content?.meta?.title || 'Chapter 1',
+      content: ch1Data.content,
+      assets:  ch1Data.assets
     };
     showLoader(false);
-    Renderer.renderFirstChapter(firstChapter);
+    Renderer.renderFirstChapter(ch1);
     showToast('📖 ' + title);
 
-    // Pre-fetch chapter 2 immediately, then rest with small gaps
-    if (chapters.length > 1) {
-      loadRemainingChapters(chapters.slice(1));
-    }
+    // Store remaining chapters in queue
+    _chapterQueue = chapters.slice(1);
+
+    // Show Next Chapter button or End of Book
+    appendNextChapterUI();
 
   } catch (e) {
     console.error(e);
@@ -603,9 +653,93 @@ async function loadFromChaptersJson(chaptersJsonUrl, bookTitle) {
   }
 }
 
-// Entry point B — used for local file open or direct .lbk URL
+// Appends the Next Chapter button (or End of Book card) after last chapter
+function appendNextChapterUI() {
+  // Remove any existing next-chapter UI first
+  document.getElementById('nextChapterUI')?.remove();
+
+  const container = document.getElementById('readerContent');
+  const wrap = document.createElement('div');
+  wrap.id = 'nextChapterUI';
+
+  if (_chapterQueue.length > 0) {
+    const next = _chapterQueue[0];
+    const chNum = _chapterIndex + 1;
+    wrap.className = 'next-chapter-wrap';
+    wrap.innerHTML = `
+      <button class="next-chapter-btn" onclick="loadNextChapter()" id="nextChapterBtn">
+        <div class="btn-spinner"></div>
+        <span class="btn-arrow">📖</span>
+        <span class="btn-label">Next: ${escHtml(next.title || 'Chapter ' + chNum)}</span>
+        <span class="btn-arrow">→</span>
+      </button>`;
+  } else {
+    // No more chapters — end of book
+    wrap.className = 'end-of-book';
+    wrap.innerHTML = `
+      <div class="end-of-book-icon">✨</div>
+      <div class="end-of-book-title">End of Book</div>
+      <div class="end-of-book-sub">You've finished reading. Thank you!</div>`;
+  }
+
+  container.appendChild(wrap);
+}
+
+// Called when user taps "Next Chapter"
+async function loadNextChapter() {
+  if (_loadingChapter || _chapterQueue.length === 0) return;
+  _loadingChapter = true;
+
+  const btn = document.getElementById('nextChapterBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.querySelector('.btn-label').textContent = 'Loading…';
+  }
+
+  const chMeta = _chapterQueue.shift(); // take first from queue
+  _chapterIndex++;
+
+  try {
+    const parsed = await LBKReader.fetchLBK(chMeta.file);
+    const ch = {
+      title:   chMeta.title || parsed.content?.meta?.title || ('Chapter ' + _chapterIndex),
+      content: parsed.content,
+      assets:  parsed.assets
+    };
+
+    // Remove the Next Chapter button before appending chapter
+    document.getElementById('nextChapterUI')?.remove();
+
+    Renderer.appendChapter(ch);
+
+    // Scroll to new chapter smoothly
+    const newCard = document.getElementById('chapter-' + (Renderer.chapters.length - 1));
+    if (newCard) setTimeout(() => newCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    // Show next button or end of book
+    appendNextChapterUI();
+
+  } catch (e) {
+    console.error(e);
+    showToast('⚠ Could not load chapter: ' + e.message);
+    // Re-enqueue so user can retry
+    _chapterQueue.unshift(chMeta);
+    _chapterIndex--;
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-label').textContent = 'Tap to retry';
+    }
+  } finally {
+    _loadingChapter = false;
+  }
+}
+
+// Entry point B — single .lbk file (local open or direct URL)
 async function loadFile(arrayBuffer, filename) {
   showLoader(true);
+  _chapterQueue = []; // reset chapter state
   try {
     const bookData = await LBKReader.parseLBK(arrayBuffer);
     document.getElementById('readerBookTitle').textContent =
@@ -619,26 +753,6 @@ async function loadFile(arrayBuffer, filename) {
     document.getElementById('loadingState').style.display = 'block';
   } finally {
     showLoader(false);
-  }
-}
-
-// Load chapters 2..N one at a time in background
-// Chapter 2 loads immediately (pre-fetch), rest have small gaps
-async function loadRemainingChapters(remaining) {
-  for (let i = 0; i < remaining.length; i++) {
-    const chMeta = remaining[i];
-    try {
-      // Let UI breathe between chapters (skip gap for ch2 — pre-fetch immediately)
-      if (i > 0) await new Promise(r => setTimeout(r, 120));
-      const parsed = await LBKReader.fetchLBK(chMeta.file);
-      Renderer.appendChapter({
-        title:   chMeta.title || parsed.content?.meta?.title || ('Chapter ' + (i + 2)),
-        content: parsed.content,
-        assets:  parsed.assets
-      });
-    } catch (e) {
-      console.warn('Skipping chapter:', chMeta.title, e.message);
-    }
   }
 }
 
