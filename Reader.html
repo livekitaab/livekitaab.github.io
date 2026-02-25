@@ -556,9 +556,20 @@ window.addEventListener('DOMContentLoaded', () => {
   showLoader(true);
   document.getElementById('loadingState').style.display = 'none';
 
-  fetch(fetchUrl)
-    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status} — ${r.statusText}`); return r.arrayBuffer(); })
-    .then(buf => loadFile(buf, rawUrl))
+  fetch(fetchUrl, { cache: 'no-store' })
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status} — ${r.statusText}`);
+      return r.arrayBuffer();
+    })
+    .then(buf => {
+      // Double-check: buffer must be non-empty and look like a ZIP (starts with PK)
+      const header = new Uint8Array(buf.slice(0, 4));
+      const isPK = header[0] === 0x50 && header[1] === 0x4B;
+      if (!isPK || buf.byteLength < 100) {
+        throw new Error('File appears corrupted or incomplete. Please try again.');
+      }
+      return loadFile(buf, rawUrl);
+    })
     .catch(e => {
       showLoader(false);
       const ls = document.getElementById('loadingState');
@@ -566,7 +577,8 @@ window.addEventListener('DOMContentLoaded', () => {
       ls.querySelector('h2').textContent = '⚠ Download Failed';
       ls.querySelector('p').innerHTML =
         `Could not fetch <em>${escHtml(book.title || 'book')}</em>: ${escHtml(e.message)}<br><br>`
-        + `You can still read it: <a href="${escHtml(rawUrl)}" target="_blank" style="color:var(--green)">download the file</a>`
+        + `You can still read it: `
+        + `<a href="${escHtml(rawUrl)}" target="_blank" style="color:var(--green)">download the file</a>`
         + ` then tap <b>Open File</b> below.`;
     });
 });
