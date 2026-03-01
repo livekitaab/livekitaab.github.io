@@ -69,6 +69,26 @@
   /* ── Page layout ─────────────────────────────────────────── */
   .page-wrap { max-width: 700px; margin: 0 auto; padding: 32px 16px 80px; }
 
+  /* ── NEW SUBSCRIPTION WELCOME BANNER ────────────────────── */
+  .new-sub-banner {
+    background: linear-gradient(120deg, var(--green-dark) 0%, var(--green) 60%, var(--gold-deep) 100%);
+    border-radius: var(--radius); margin: 0 16px 24px;
+    padding: 20px 22px; display: none;
+    box-shadow: 0 4px 24px rgba(61,122,86,.35);
+    position: relative; overflow: hidden;
+  }
+  .new-sub-banner.show { display: flex; align-items: flex-start; gap: 14px; }
+  .new-sub-banner::after {
+    content: '⭐'; position: absolute; right: 8px; bottom: -8px;
+    font-size: 72px; opacity: .12; pointer-events: none;
+  }
+  .new-sub-banner-icon { font-size: 2rem; flex-shrink: 0; margin-top: 2px; }
+  .new-sub-banner-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 4px;
+  }
+  .new-sub-banner-text p { font-size: .82rem; color: var(--brown-deep); line-height: 1.5; }
+
   /* ── Auth banner (when logged out) ─────────────────────── */
   .auth-banner {
     background: linear-gradient(120deg, var(--green) 0%, var(--green-light) 55%, var(--gold-deep) 100%);
@@ -124,6 +144,8 @@
   }
   .form-input:focus { border-color: var(--green); background: white; }
   .form-input::placeholder { color: var(--text-light); }
+  /* Highlight email field when pre-filled from sub flow */
+  .form-input.prefilled { border-color: var(--green); background: white; }
 
   .btn-full {
     width: 100%; padding: 11px; border: none; border-radius: var(--radius-sm);
@@ -133,6 +155,9 @@
   .btn-submit { background: var(--brown); color: var(--cream); }
   .btn-submit:hover { background: var(--brown-deep); }
   .btn-submit:active { transform: scale(.98); }
+  /* Green submit when coming from subscription */
+  .btn-submit.sub-mode { background: var(--green-dark); }
+  .btn-submit.sub-mode:hover { background: var(--green); color: var(--brown-dark); }
 
   .form-footer {
     font-size: .78rem; color: var(--text-light);
@@ -176,6 +201,15 @@
   .profile-info p { font-size: .82rem; color: var(--brown-deep); margin-top: 2px; }
   .profile-info small { font-size: .72rem; color: var(--brown-deep); font-style: italic; }
 
+  /* ── Subscription badge in profile ──────────────────────── */
+  .sub-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--brown-dark); color: var(--gold);
+    font-size: .72rem; font-weight: 600; padding: 3px 10px;
+    border-radius: 12px; margin-top: 5px;
+  }
+  .sub-badge.active { background: var(--green-dark); color: white; }
+
   /* ── Section cards ───────────────────────────────────────── */
   .section-card {
     background: white; border-radius: var(--radius);
@@ -186,7 +220,7 @@
     font-family: 'Playfair Display', serif;
     font-size: .95rem; font-weight: 700; color: var(--text-dark);
     margin-bottom: 16px; padding-bottom: 10px;
-    border-bottom: 1px solid var(--cream-darker, #e0cdb0);
+    border-bottom: 1px solid var(--cream-deeper);
     display: flex; align-items: center; gap: 8px;
   }
 
@@ -239,6 +273,25 @@
   }
   .stat-label { font-size: .7rem; color: var(--text-light); margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; }
 
+  /* ── Subscription info card ──────────────────────────────── */
+  .sub-info-card {
+    background: linear-gradient(120deg, rgba(107,191,142,.12) 0%, rgba(162,213,161,.08) 100%);
+    border: 1.5px solid var(--green);
+    border-radius: var(--radius); padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+  }
+  .sub-info-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .sub-info-text h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: .9rem; font-weight: 700; color: var(--green-dark); margin-bottom: 3px;
+  }
+  .sub-info-text p { font-size: .78rem; color: var(--text-light); }
+  .sub-info-expired {
+    border-color: var(--cream-deeper);
+    background: rgba(0,0,0,.02);
+  }
+  .sub-info-expired .sub-info-text h4 { color: var(--text-light); }
+
   /* ── Danger zone / settings ─────────────────────────────── */
   .setting-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -280,7 +333,9 @@
 
   <!-- Top nav -->
   <nav class="topnav">
-    <a class="topnav-brand" href="#" data-page="library.html"><span style="color:#ffffff;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Live</span><span style="color:#f7e7b5;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Kitaab</span></a>
+    <a class="topnav-brand" href="#" data-page="Main.html">
+      <span style="color:#ffffff;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Live</span><span style="color:#f7e7b5;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Kitaab</span>
+    </a>
     <div class="topnav-links">
       <a href="#" data-page="Main.html">Library</a>
       <a href="#" data-page="Reader.html">Reader</a>
@@ -290,20 +345,31 @@
 
   <!-- ── LOGGED-OUT VIEW ───────────────────────────────────── -->
   <div id="authView">
-    <div class="auth-banner">
-      <h1>Welcome to <span style="color:#fff;display:inline;">Live</span><span style="color:#fff;display:inline;">Kitaab</span></h1>
-      <p>Sign in to access your library &amp; purchased books</p>
+
+    <!-- Welcome banner — shown for everyone, enhanced when coming from subscription -->
+    <div class="auth-banner" id="authBanner">
+      <h1 id="authBannerTitle">Welcome to <span style="color:#fff;">Live</span><span style="color:#fff;">Kitaab</span></h1>
+      <p id="authBannerSub">Sign in to access your library &amp; books</p>
+    </div>
+
+    <!-- New subscription welcome strip — shown only after payment approval -->
+    <div class="new-sub-banner" id="newSubBanner">
+      <div class="new-sub-banner-icon">🎉</div>
+      <div class="new-sub-banner-text">
+        <h3>Subscription Approved!</h3>
+        <p id="newSubBannerText">Your ₹200 payment has been verified. Create your account below to lock in your 30-day access — it will follow you on every device.</p>
+      </div>
     </div>
 
     <div class="page-wrap" style="padding-top:0;">
       <div class="auth-card">
         <div class="auth-tabs">
-          <button class="auth-tab active" onclick="switchAuthTab('login',this)">Sign In</button>
-          <button class="auth-tab" onclick="switchAuthTab('register',this)">Create Account</button>
+          <button class="auth-tab" id="tab-login"    onclick="switchAuthTab('login',this)">Sign In</button>
+          <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register',this)">Create Account</button>
         </div>
 
         <!-- Login form -->
-        <div class="auth-form active" id="form-login">
+        <div class="auth-form" id="form-login">
           <div class="form-group">
             <label class="form-label">Email</label>
             <input class="form-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
@@ -351,10 +417,14 @@
         <h2 id="profileName">Reader</h2>
         <p id="profileEmail">–</p>
         <small id="profileJoined"></small>
+        <div id="profileSubBadge"></div>
       </div>
     </div>
 
     <div class="page-wrap" style="padding-top:0;">
+
+      <!-- Subscription info card -->
+      <div id="subInfoCard"></div>
 
       <!-- Stats -->
       <div class="section-card">
@@ -362,11 +432,11 @@
         <div class="stats-grid">
           <div class="stat-box">
             <div class="stat-num" id="statOwned">0</div>
-            <div class="stat-label">Owned</div>
+            <div class="stat-label">Free Books</div>
           </div>
           <div class="stat-box">
-            <div class="stat-num" id="statFree">0</div>
-            <div class="stat-label">Free Read</div>
+            <div class="stat-num" id="statSubDays">–</div>
+            <div class="stat-label">Days Left</div>
           </div>
           <div class="stat-box">
             <div class="stat-num" id="statSpent">₹0</div>
@@ -377,9 +447,9 @@
 
       <!-- Owned books -->
       <div class="section-card">
-        <div class="section-title">📚 My Books</div>
+        <div class="section-title">📚 My Library</div>
         <div class="owned-list" id="ownedList">
-          <div class="empty-owned"><span>🌿</span>No purchased books yet.<br>Visit the Library to discover stories.</div>
+          <div class="empty-owned"><span>🌿</span>Loading your books…</div>
         </div>
       </div>
 
@@ -409,33 +479,30 @@
 </div><!-- #app -->
 <div id="toast"></div>
 
-<!-- Firebase SDK (v10 modular — loaded as compat for simplicity) -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  STEP 1 — Paste your Firebase config here.
-//  Get it from: Firebase Console → Project Settings → Your Apps
-//  It looks exactly like the object below.
+//  FIREBASE CONFIG
 // ══════════════════════════════════════════════════════════════
 const firebaseConfig = {
-  apiKey: "AIzaSyAOUx2hi5LMebUVc_vlGQ_QEkBeMjQaaMo",
-  authDomain: "livekitaab.firebaseapp.com",
-  projectId: "livekitaab",
-  storageBucket: "livekitaab.firebasestorage.app",
+  apiKey:            "AIzaSyAOUx2hi5LMebUVc_vlGQ_QEkBeMjQaaMo",
+  authDomain:        "livekitaab.firebaseapp.com",
+  projectId:         "livekitaab",
+  storageBucket:     "livekitaab.firebasestorage.app",
   messagingSenderId: "387850236053",
-  appId: "1:387850236053:web:babf8596ac3841aeddeb9c",
-  measurementId: "G-1RY50RP54G"
+  appId:             "1:387850236053:web:babf8596ac3841aeddeb9c",
+  measurementId:     "G-1RY50RP54G"
 };
 
-// ── Init Firebase ────────────────────────────────────────────
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// ── Navigation helper ────────────────────────────────────────
+// ── Navigation ───────────────────────────────────────────────
 const _basePath = (() => {
   const p = window.location.pathname;
   return p.substring(0, p.lastIndexOf('/'));
@@ -443,27 +510,99 @@ const _basePath = (() => {
 function nav(page) { window.location.href = _basePath + '/' + page; }
 function navHref(page) { return _basePath + '/' + page; }
 
-// ── State ────────────────────────────────────────────────────
-// ownedIds lives in localStorage so it works even when logged out.
-// On login we also sync to/from Firestore so it follows the user.
-let ownedIds = JSON.parse(localStorage.getItem('owned_ids') || '[]');
+// ── Subscription helpers (mirrors Main.html) ─────────────────
+const SUB_KEY = 'lk_sub';
+function getLocalSub() {
+  try { return JSON.parse(localStorage.getItem(SUB_KEY) || 'null'); } catch { return null; }
+}
+function isLocalSubActive() {
+  const sub = getLocalSub();
+  if (!sub || !sub.expiry) return false;
+  return new Date(sub.expiry) > new Date();
+}
+function getSubDaysLeft() {
+  const sub = getLocalSub();
+  if (!sub || !sub.expiry) return 0;
+  return Math.max(0, Math.ceil((new Date(sub.expiry) - new Date()) / 86400000));
+}
 
-// ── Boot — Firebase tells us auth state, we don't guess ──────
+// ══════════════════════════════════════════════════════════════
+//  NEW SUBSCRIPTION FLOW
+//  If Main.html redirected here after approval, sessionStorage
+//  will have 'lk_new_sub'. We use that to:
+//  1. Show the green welcome banner
+//  2. Switch to the Register tab automatically
+//  3. After account creation, write subscription to Firestore
+// ══════════════════════════════════════════════════════════════
+let _newSubData = null; // set if user just subscribed
+
+function checkNewSubFlag() {
+  try {
+    const raw = sessionStorage.getItem('lk_new_sub');
+    if (!raw) return;
+    _newSubData = JSON.parse(raw);
+    // Don't remove yet — keep it for the register handler
+  } catch { _newSubData = null; }
+}
+
+function applyNewSubUI() {
+  if (!_newSubData) return;
+
+  // Show green welcome banner
+  const banner = document.getElementById('newSubBanner');
+  if (banner) {
+    document.getElementById('newSubBannerText').textContent =
+      `Your ₹200 payment has been verified. Create your account below to lock in your ${_newSubData.days || 30}-day access — your subscription will sync to every device you sign in on.`;
+    banner.classList.add('show');
+  }
+
+  // Update auth banner to feel like a welcome
+  document.getElementById('authBannerTitle').textContent = '🎉 Payment Approved!';
+  document.getElementById('authBannerSub').textContent =
+    'One last step — create your account to activate your subscription.';
+
+  // Switch to register tab automatically
+  const regTab = document.getElementById('tab-register');
+  if (regTab) switchAuthTab('register', regTab);
+
+  // Highlight the register button green
+  const regBtn = document.getElementById('reg-btn');
+  if (regBtn) {
+    regBtn.classList.add('sub-mode');
+    regBtn.textContent = 'Create Account & Activate Subscription →';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   // Rewrite nav links
   document.querySelectorAll('a[data-page]').forEach(a => {
     a.href = navHref(a.dataset.page);
   });
 
-  // Show spinner while Firebase resolves auth state
+  // Check for new-subscription flag before Firebase resolves
+  checkNewSubFlag();
+
+  // Hide both views while Firebase resolves auth state
   document.getElementById('authView').style.display    = 'none';
   document.getElementById('profileView').style.display = 'none';
 
-  auth.onAuthStateChanged(user => {
+  auth.onAuthStateChanged(async user => {
     if (user) {
+      // If there's a pending new subscription, write it to Firestore first
+      if (_newSubData) {
+        await writeSubToFirestore(user, _newSubData);
+        sessionStorage.removeItem('lk_new_sub');
+        _newSubData = null;
+        showToast('⭐ Subscription activated!');
+      }
       showProfile(user);
     } else {
       showAuth();
+      // Apply new-sub UI after auth view is shown
+      if (_newSubData) applyNewSubUI();
     }
   });
 });
@@ -478,7 +617,6 @@ async function showProfile(user) {
   document.getElementById('authView').style.display    = 'none';
   document.getElementById('profileView').style.display = 'block';
 
-  // Display name: Firestore profile takes priority over Firebase Auth displayName
   const profile = await loadFirestoreProfile(user);
   const name    = profile?.name || user.displayName || nameFromEmail(user.email);
   const joined  = user.metadata.creationTime;
@@ -492,17 +630,107 @@ async function showProfile(user) {
       'Member since ' + new Date(joined).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
   }
 
-  // Sync owned IDs from Firestore → localStorage
-  if (profile?.owned_ids?.length) {
-    const merged = [...new Set([...ownedIds, ...profile.owned_ids])];
-    ownedIds = merged;
-    localStorage.setItem('owned_ids', JSON.stringify(merged));
-  }
-
-  loadOwnedBooks();
+  // Resolve subscription — check Firestore first, fallback to localStorage
+  const subInfo = await resolveSubscription(user, profile);
+  renderSubUI(subInfo);
+  renderStats(profile, subInfo);
+  loadOwnedBooks(profile);
 }
 
-// ── Firestore: load user profile doc ────────────────────────
+// ── Resolve subscription from Firestore + localStorage ───────
+async function resolveSubscription(user, profile) {
+  // Firestore subscription takes priority
+  const fsub = profile?.subscription;
+  if (fsub?.expiry) {
+    const expiry = new Date(fsub.expiry);
+    const active = expiry > new Date();
+    const days   = active ? Math.ceil((expiry - new Date()) / 86400000) : 0;
+    // Sync back to localStorage so Main.html stays in sync
+    if (active) {
+      localStorage.setItem(SUB_KEY, JSON.stringify({
+        code:   fsub.code || 'FIRESTORE',
+        expiry: fsub.expiry
+      }));
+    }
+    return { active, days, expiry, source: 'firestore' };
+  }
+  // Fallback: localStorage
+  const local = getLocalSub();
+  if (local?.expiry) {
+    const expiry = new Date(local.expiry);
+    const active = expiry > new Date();
+    const days   = active ? Math.ceil((expiry - new Date()) / 86400000) : 0;
+    // If active in localStorage, push it to Firestore
+    if (active) await writeSubToFirestore(user, { code: local.code, days });
+    return { active, days, expiry, source: 'local' };
+  }
+  return { active: false, days: 0 };
+}
+
+// ── Write subscription to Firestore ──────────────────────────
+async function writeSubToFirestore(user, subData) {
+  try {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + (subData.days || 30));
+    await db.collection('users').doc(user.uid).set({
+      subscription: {
+        code:       subData.code || 'APPROVED',
+        days:       subData.days || 30,
+        expiry:     expiry.toISOString(),
+        activated:  new Date().toISOString(),
+      },
+      updated: firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    // Keep localStorage in sync
+    localStorage.setItem(SUB_KEY, JSON.stringify({
+      code:   subData.code,
+      expiry: expiry.toISOString()
+    }));
+  } catch (e) { console.warn('Firestore sub write failed:', e); }
+}
+
+// ── Render subscription UI in profile ────────────────────────
+function renderSubUI(subInfo) {
+  // Badge on avatar card
+  const badge = document.getElementById('profileSubBadge');
+  if (subInfo.active) {
+    badge.innerHTML = `<span class="sub-badge active">⭐ Subscribed · ${subInfo.days} day${subInfo.days!==1?'s':''} left</span>`;
+  } else {
+    badge.innerHTML = `<span class="sub-badge">No active subscription</span>`;
+  }
+
+  // Subscription info card
+  const card = document.getElementById('subInfoCard');
+  if (subInfo.active) {
+    const exp = subInfo.expiry ? new Date(subInfo.expiry).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '–';
+    card.innerHTML = `
+      <div class="sub-info-card">
+        <div class="sub-info-icon">⭐</div>
+        <div class="sub-info-text">
+          <h4>Active Subscription</h4>
+          <p>Full library access until ${exp} · ${subInfo.days} day${subInfo.days!==1?'s':''} remaining</p>
+        </div>
+      </div>`;
+  } else {
+    card.innerHTML = `
+      <div class="sub-info-card sub-info-expired">
+        <div class="sub-info-icon">📖</div>
+        <div class="sub-info-text">
+          <h4>No Active Subscription</h4>
+          <p>Subscribe for ₹200/month to unlock every book in the library.</p>
+        </div>
+      </div>`;
+  }
+}
+
+function renderStats(profile, subInfo) {
+  const freeBooks = []; // could count from library if needed
+  document.getElementById('statOwned').textContent   = profile?.owned_ids?.length || 0;
+  document.getElementById('statSubDays').textContent = subInfo.active ? subInfo.days : '–';
+  document.getElementById('statSpent').textContent   = subInfo.active ? '₹200' : '₹0';
+}
+
+// ── Firestore: load user profile ─────────────────────────────
 async function loadFirestoreProfile(user) {
   try {
     const doc = await db.collection('users').doc(user.uid).get();
@@ -510,34 +738,18 @@ async function loadFirestoreProfile(user) {
   } catch { return null; }
 }
 
-// ── Firestore: save / merge user profile ────────────────────
+// ── Firestore: save / merge user profile ─────────────────────
 async function saveFirestoreProfile(user, name) {
   try {
     await db.collection('users').doc(user.uid).set({
       name,
-      email:     user.email,
-      owned_ids: ownedIds,
-      updated:   firebase.firestore.FieldValue.serverTimestamp(),
+      email:   user.email,
+      updated: firebase.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
   } catch (e) { console.warn('Firestore write failed:', e); }
 }
 
-// ── Firestore: push a newly unlocked book ID ─────────────────
-// Called from library.html after password verification succeeds.
-// We expose it on window so library.html can call it cross-page
-// via sessionStorage signalling (see library.html unlockBook).
-async function pushOwnedToFirestore(bookId) {
-  const user = auth.currentUser;
-  if (!user) return;
-  try {
-    await db.collection('users').doc(user.uid).set({
-      owned_ids: firebase.firestore.FieldValue.arrayUnion(bookId),
-      updated:   firebase.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
-  } catch (e) { console.warn('Firestore sync failed:', e); }
-}
-
-// ── Auth tab switch ──────────────────────────────────────────
+// ── Auth tab switch ───────────────────────────────────────────
 function switchAuthTab(key, el) {
   document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -546,17 +758,15 @@ function switchAuthTab(key, el) {
   clearErrors();
 }
 
-// ── Sign In ──────────────────────────────────────────────────
+// ── Sign In ───────────────────────────────────────────────────
 async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   if (!email || !pass) { showError('login-error', 'Please fill all fields.'); return; }
   clearErrors();
   setLoading('login-btn', true);
-
   try {
     await auth.signInWithEmailAndPassword(email, pass);
-    // onAuthStateChanged fires → showProfile() called automatically
     showToast('Welcome back!');
   } catch (e) {
     showError('login-error', firebaseErrorMessage(e));
@@ -565,7 +775,7 @@ async function handleLogin() {
   }
 }
 
-// ── Register ─────────────────────────────────────────────────
+// ── Register ──────────────────────────────────────────────────
 async function handleRegister() {
   const name  = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
@@ -579,11 +789,18 @@ async function handleRegister() {
 
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, pass);
-    // Set display name in Firebase Auth
     await cred.user.updateProfile({ displayName: name });
-    // Save full profile to Firestore
     await saveFirestoreProfile(cred.user, name);
-    showToast('Account created! Welcome, ' + name + '!');
+
+    // If this is a post-subscription registration, write subscription to Firestore
+    if (_newSubData) {
+      await writeSubToFirestore(cred.user, _newSubData);
+      sessionStorage.removeItem('lk_new_sub');
+      _newSubData = null;
+      showToast('🎉 Account created & subscription activated!');
+    } else {
+      showToast('Account created! Welcome, ' + name + '!');
+    }
     // onAuthStateChanged fires → showProfile() called automatically
   } catch (e) {
     showError('reg-error', firebaseErrorMessage(e));
@@ -595,114 +812,93 @@ async function handleRegister() {
 // ── Password reset ────────────────────────────────────────────
 async function showForgot() {
   const email = document.getElementById('login-email').value.trim();
-  if (!email) {
-    showError('login-error', 'Enter your email above first, then click Reset.');
-    return;
-  }
+  if (!email) { showError('login-error', 'Enter your email above first, then click Reset.'); return; }
   try {
     await auth.sendPasswordResetEmail(email);
     showToast('Reset email sent — check your inbox.');
-  } catch (e) {
-    showError('login-error', firebaseErrorMessage(e));
-  }
+  } catch (e) { showError('login-error', firebaseErrorMessage(e)); }
 }
 
-// ── Change password ───────────────────────────────────────────
 async function showChangePassword() {
   const user = auth.currentUser;
   if (!user) return;
   try {
     await auth.sendPasswordResetEmail(user.email);
     showToast('Password reset email sent to ' + user.email);
-  } catch (e) {
-    showToast('Could not send reset email: ' + e.message);
-  }
+  } catch (e) { showToast('Could not send reset email: ' + e.message); }
 }
 
 // ── Sign out ──────────────────────────────────────────────────
 async function signOut() {
   await auth.signOut();
   showToast('Signed out. See you soon!');
-  // onAuthStateChanged fires → showAuth() called automatically
 }
 
-// ── Load + render owned books ─────────────────────────────────
-// Reads from localStorage (populated when books are unlocked in library.html)
-// then also fetches the library.json to get full book metadata for display.
-async function loadOwnedBooks() {
+// ── Load owned books ──────────────────────────────────────────
+async function loadOwnedBooks(profile) {
   let allBooks = [];
   try {
-    const LIBRARY_URL = 'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json';
-    const r = await fetch(LIBRARY_URL);
+    const r = await fetch('https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/library.json');
     const j = await r.json();
     allBooks = j.books || [];
-    // Cache for offline use
     sessionStorage.setItem('library_cache', JSON.stringify(j));
   } catch {
     const cached = sessionStorage.getItem('library_cache');
     if (cached) allBooks = JSON.parse(cached).books || [];
   }
 
-  const owned = allBooks.filter(b => ownedIds.includes(b.id));
-  const free  = allBooks.filter(b => b.price === 0);
-  renderOwnedBooks(owned);
-  updateStats(owned, free);
-}
-
-function renderOwnedBooks(books) {
+  // Show all books since subscriber gets full access
+  const sub = await resolveSubscription(auth.currentUser, profile);
   const list = document.getElementById('ownedList');
-  if (!books.length) {
-    list.innerHTML = `<div class="empty-owned"><span>🌿</span>No purchased books yet.<br>Visit the Library to discover stories.</div>`;
-    return;
-  }
-  list.innerHTML = '';
-  books.forEach(book => {
-    const item = document.createElement('div');
-    item.className = 'owned-item';
-    item.innerHTML = `
-      <div class="owned-thumb">📕</div>
-      <div class="owned-info">
-        <div class="owned-title">${escHtml(book.title)}</div>
-        <div class="owned-meta">${escHtml(book.author || '')} · ${escHtml(book.type || '')}</div>
-      </div>
-      <button class="owned-read-btn" onclick='openBook(${JSON.stringify(book)})'>Read →</button>`;
-    list.appendChild(item);
-  });
-}
 
-function updateStats(owned, free) {
-  const paid  = owned.filter(b => b.price > 0);
-  const spent = paid.reduce((s, b) => s + (b.price || 0), 0);
-  document.getElementById('statOwned').textContent = paid.length;
-  document.getElementById('statFree').textContent  = free.length;
-  document.getElementById('statSpent').textContent = '₹' + spent;
+  if (sub.active) {
+    if (!allBooks.length) {
+      list.innerHTML = `<div class="empty-owned"><span>🌿</span>Library is loading…</div>`;
+      return;
+    }
+    list.innerHTML = '';
+    allBooks.filter(b => b.file || b.chapters).forEach(book => {
+      const item = document.createElement('div');
+      item.className = 'owned-item';
+      item.innerHTML = `
+        <div class="owned-thumb">📕</div>
+        <div class="owned-info">
+          <div class="owned-title">${escHtml(book.title)}</div>
+          <div class="owned-meta">${escHtml(book.author || '')} · ${escHtml(book.type || '')}</div>
+        </div>
+        <button class="owned-read-btn" onclick='openBook(${JSON.stringify(book)})'>Read →</button>`;
+      list.appendChild(item);
+    });
+  } else {
+    list.innerHTML = `<div class="empty-owned"><span>⭐</span>Subscribe for ₹200/month to unlock every book.</div>`;
+  }
 }
 
 function openBook(book) {
   sessionStorage.setItem('pending_book', JSON.stringify(book));
-  nav('reader.html');
+  nav('Reader.html');
 }
 
 // ── Clear local data ──────────────────────────────────────────
 function clearData() {
-  if (!confirm('Clear local reading data? This only affects this device — your account is safe.')) return;
-  localStorage.removeItem('owned_ids');
-  ownedIds = [];
+  if (!confirm('Clear local data? Your account and subscription are safe.')) return;
+  localStorage.removeItem('lk_sub');
+  localStorage.removeItem('lk_sub_utrs');
   showToast('Local data cleared.');
-  loadOwnedBooks();
+  location.reload();
 }
 
-// ── Firebase error → human readable ──────────────────────────
+// ── Firebase error messages ───────────────────────────────────
 function firebaseErrorMessage(e) {
   const map = {
-    'auth/user-not-found':       'No account found with that email.',
-    'auth/wrong-password':       'Incorrect password.',
-    'auth/email-already-in-use': 'An account with that email already exists.',
-    'auth/weak-password':        'Password must be at least 6 characters.',
-    'auth/invalid-email':        'Please enter a valid email address.',
-    'auth/too-many-requests':    'Too many attempts. Please wait a moment.',
+    'auth/user-not-found':         'No account found with that email.',
+    'auth/wrong-password':         'Incorrect password.',
+    'auth/email-already-in-use':   'An account with that email already exists.',
+    'auth/weak-password':          'Password must be at least 6 characters.',
+    'auth/invalid-email':          'Please enter a valid email address.',
+    'auth/too-many-requests':      'Too many attempts. Please wait a moment.',
     'auth/network-request-failed': 'Network error — check your connection.',
-    'auth/invalid-credential':   'Incorrect email or password.',
+    'auth/invalid-credential':     'Incorrect email or password.',
   };
   return map[e.code] || e.message;
 }
