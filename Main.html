@@ -204,6 +204,8 @@
     <span class="filter-label">Filter</span>
     <button class="chip" id="freeChip" onclick="toggleFree()">💎 Free Only</button>
     <div class="filter-spacer"></div>
+    <button id="subBanner" class="chip" onclick="isSubscribed()?null:openSubModal()"
+            style="display:none;border:none;cursor:pointer;font-weight:600;">⭐ Subscribe ₹200/mo</button>
     <span id="statusText">Loading library…</span>
   </div>
 
@@ -219,120 +221,98 @@
 
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     PURCHASE MODAL
-     Panels: pay → utr → verifying → success
-     Author passkey toggles in place of UTR panel
-     ═══════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="purchaseModal">
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal-overlay" id="subModal">
   <div class="modal">
-
-    <div class="modal-title" id="pm-title"></div>
-    <div class="modal-sub"   id="pm-sub"></div>
-
-    <!-- Step indicator -->
-    <div class="steps" id="pm-steps">
+    <div class="modal-title">📚 Subscribe to LiveKitaab</div>
+    <div class="modal-sub">₹200 / month · Unlock every book in the library</div>
+    <div class="steps" id="sm-steps">
       <div class="scol"><div class="sdot on" id="sd1">1</div><div class="slabel">Pay</div></div>
       <div class="sline" id="sl1"></div>
       <div class="scol"><div class="sdot"    id="sd2">2</div><div class="slabel">Confirm</div></div>
       <div class="sline" id="sl2"></div>
-      <div class="scol"><div class="sdot"    id="sd3">3</div><div class="slabel">Read</div></div>
+      <div class="scol"><div class="sdot"    id="sd3">3</div><div class="slabel">Access</div></div>
     </div>
-
-    <!-- ── PANEL 1: QR PAYMENT ─────────────────────── -->
-    <div id="pp-pay">
+    <!-- PANEL 1: QR -->
+    <div id="sp-pay">
       <div class="qr-box">
-        <div class="qr-eyebrow">📷 Open your UPI app → Scan QR → Pay</div>
-        <div id="qrcode"></div>
-        <div class="amount-pill" id="pm-amount">₹–</div>
+        <div class="qr-eyebrow">📷 Open your UPI app → Scan QR → Pay ₹200</div>
+        <div id="sub-qrcode"></div>
+        <div class="amount-pill">₹200 / month</div>
         <div class="upi-row">
-          <span class="upi-chip" id="pm-upi-text"></span>
-          <button class="copy-btn" onclick="copyUPI()">Copy</button>
+          <span class="upi-chip" id="sm-upi-text">arohanchatterjee881@okicici</span>
+          <button class="copy-btn" onclick="copySubUPI()">Copy</button>
         </div>
         <div class="app-chips">
-          <span class="app-chip">GPay</span>
-          <span class="app-chip">PhonePe</span>
-          <span class="app-chip">Paytm</span>
-          <span class="app-chip">BHIM</span>
-          <span class="app-chip">Any UPI</span>
+          <span class="app-chip">GPay</span><span class="app-chip">PhonePe</span>
+          <span class="app-chip">Paytm</span><span class="app-chip">Any UPI</span>
         </div>
       </div>
       <p style="font-size:.75rem;color:var(--text-mid);text-align:center;line-height:1.6;margin-bottom:4px;">
         After paying, tap <strong>I've Paid →</strong> and enter your Transaction ID.
       </p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeModal('purchaseModal')">Cancel</button>
-        <button class="btn btn-green" onclick="showPanel('utr')">I've Paid →</button>
+        <button class="btn btn-ghost" onclick="closeModal('subModal')">Cancel</button>
+        <button class="btn btn-green" onclick="showSubPanel('utr')">I've Paid →</button>
       </div>
-      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
     </div>
-
-    <!-- ── PANEL 2: UTR ENTRY ──────────────────────── -->
-    <div id="pp-utr" style="display:none">
+    <!-- PANEL 2: UTR -->
+    <div id="sp-utr" style="display:none">
       <div class="info-box green">
         <div class="ibox-title green">✅ Enter your Transaction ID (UTR)</div>
         <div class="ibox-body">
-          Every UPI payment gives you a <strong>Transaction / Reference ID</strong>.
-          Enter it below — it proves your payment went through.
+          Every UPI payment gives a <strong>Transaction / Reference ID</strong>.
+          Enter it below to confirm your ₹200 subscription payment.
           <div class="ibox-where">
             <strong>Where to find it:</strong><br>
-            • <strong>GPay</strong> → tap the payment → "Transaction ID"<br>
+            • <strong>GPay</strong> → tap payment → "Transaction ID"<br>
             • <strong>PhonePe</strong> → History → tap payment → "UTR No."<br>
-            • <strong>Paytm</strong> → Passbook → tap payment → "Bank Ref. No"<br>
+            • <strong>Paytm</strong> → Passbook → "Bank Ref. No"<br>
             • <strong>BHIM / others</strong> → History → tap transaction
           </div>
         </div>
       </div>
-      <input class="field" id="pm-utr" type="text"
-             placeholder="e.g. 421831092847"
-             maxlength="22" autocomplete="off"
+      <input class="field" id="sm-utr" type="text"
+             placeholder="e.g. 421831092847" maxlength="22" autocomplete="off"
              oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'').toUpperCase()"
-             onkeydown="if(event.key==='Enter')verifyUTR()">
-      <div class="err" id="utr-err"></div>
+             onkeydown="if(event.key==='Enter')verifySubUTR()">
+      <div class="err" id="sub-utr-err"></div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
-        <button class="btn btn-green" onclick="verifyUTR()">Verify &amp; Unlock →</button>
+        <button class="btn btn-ghost" onclick="showSubPanel('pay')">← Back</button>
+        <button class="btn btn-green" onclick="verifySubUTR()">Submit →</button>
       </div>
-      <div class="author-toggle" onclick="showPanel('author')">✍️ I'm the author of this book</div>
     </div>
-
-    <!-- ── PANEL 3: VERIFYING ──────────────────────── -->
-    <div id="pp-verifying" style="display:none">
+    <!-- PANEL 3: VERIFYING -->
+    <div id="sp-verifying" style="display:none">
       <div class="spinner-wrap">
         <div class="spinner"></div>
-        <div class="spinner-label">Verifying payment…</div>
+        <div class="spinner-label">Submitting payment…</div>
       </div>
     </div>
-
-    <!-- ── PANEL 4: SUCCESS ────────────────────────── -->
-    <div id="pp-success" style="display:none">
+    <!-- PANEL 4: SUCCESS -->
+    <div id="sp-success" style="display:none">
       <div class="success-wrap">
         <div class="success-emoji">🎉</div>
-        <div class="success-title">Payment Verified!</div>
-        <div class="success-sub">Opening your book…</div>
+        <div class="success-title">Subscription Active!</div>
+        <div class="success-sub">You now have access to every book for 30 days.</div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- ── PANEL 5: AUTHOR PASSKEY ─────────────────── -->
-    <div id="pp-author" style="display:none">
-      <div class="info-box gold">
-        <div class="ibox-title gold">✍️ Author Passkey</div>
-        <div class="ibox-body">
-          Enter the passkey you received from the Livekitaab team when your book was published.
-          This unlocks the book for you at no charge.
-        </div>
-      </div>
-      <input class="field" id="pm-authorkey" type="text"
-             placeholder="Your author passkey…"
-             autocomplete="off"
-             onkeydown="if(event.key==='Enter')verifyAuthorKey()">
-      <div class="err" id="author-err"></div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="showPanel('pay')">← Back</button>
-        <button class="btn btn-gold"  onclick="verifyAuthorKey()">🔓 Unlock as Author</button>
-      </div>
+<!-- HIDDEN PASSKEY MODAL -->
+<div class="modal-overlay" id="passkeyModal">
+  <div class="modal">
+    <div class="modal-title">🔑 Staff Access</div>
+    <div class="modal-sub">Enter your passkey to unlock all books.</div>
+    <input class="field" id="pk-input" type="password"
+           placeholder="Passkey…" autocomplete="off"
+           onkeydown="if(event.key==='Enter')verifyPasskey()">
+    <div class="err" id="pk-err"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('passkeyModal')">Cancel</button>
+      <button class="btn btn-gold"  onclick="verifyPasskey()">🔓 Unlock</button>
     </div>
-
   </div>
 </div>
 
@@ -370,11 +350,39 @@ const FALLBACK_BOOKS = [
 // ═══════════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════════
-let allBooks    = [];
-let filterFree  = false;
-let pendingBook = null;
-let ownedIds    = JSON.parse(localStorage.getItem('lk_owned') || '[]');
-let usedUTRs    = JSON.parse(localStorage.getItem('lk_utrs')  || '[]');
+let allBooks   = [];
+let filterFree = false;
+
+// ── SUBSCRIPTION STATE ──────────────────────────────────────
+// Subscription stored as { code, expiry } in localStorage
+// isSubscribed() checks both existence and expiry date
+const SUB_KEY = 'lk_sub';
+
+function getSubscription() {
+  try { return JSON.parse(localStorage.getItem(SUB_KEY) || 'null'); } catch { return null; }
+}
+function isSubscribed() {
+  const sub = getSubscription();
+  if (!sub || !sub.expiry) return false;
+  return new Date(sub.expiry) > new Date();
+}
+function activateSubscription(code, days) {
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + (days || 30));
+  localStorage.setItem(SUB_KEY, JSON.stringify({ code, expiry: expiry.toISOString() }));
+}
+function getSubDaysLeft() {
+  const sub = getSubscription();
+  if (!sub || !sub.expiry) return 0;
+  const ms = new Date(sub.expiry) - new Date();
+  return Math.max(0, Math.ceil(ms / 86400000));
+}
+
+// ── HIDDEN PASSKEY ──────────────────────────────────────────
+// Type this keyword anywhere on the page (not in an input) to open passkey modal
+const HIDDEN_TRIGGER  = 'livekitaab';
+const STAFF_PASSKEYS  = ['LIVEKITAAB-STAFF-2026', 'LK-ADMIN-2026']; // add your own
+let   _triggerBuffer  = '';
 
 // ═══════════════════════════════════════════════════════════
 //  NAV
@@ -392,6 +400,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     allBooks = j.books || FALLBACK_BOOKS;
   } catch { allBooks = FALLBACK_BOOKS; }
   renderLibrary();
+  updateSubBanner();
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -416,10 +425,9 @@ function renderLibrary() {
 }
 
 function makeCard(book) {
-  const owned  = ownedIds.includes(book.id);
   const isFree  = book.price === 0;
   const hasFile = !!(book.file || book.chapters);
-  const canRead = hasFile && (isFree || owned);
+  const canRead = hasFile && (isFree || isSubscribed());
 
   const card = document.createElement('div');
   card.className = 'book-card';
@@ -446,8 +454,8 @@ function makeCard(book) {
   const btn = document.createElement('button'); btn.className='btn';
   if (canRead) {
     btn.className+=' btn-read'; btn.innerHTML='📖 Read'; btn.onclick=()=>openReader(book);
-  } else if (!isFree && !owned) {
-    btn.className+=' btn-buy'; btn.innerHTML=`🛒 Buy ₹${book.price}`; btn.onclick=()=>openPurchase(book);
+  } else if (hasFile) {
+    btn.className+=' btn-buy'; btn.innerHTML='⭐ Subscribe to Read'; btn.onclick=()=>openSubModal();
   } else {
     btn.className+=' btn-muted'; btn.innerHTML='Coming Soon'; btn.disabled=true; btn.style.opacity='.5'; btn.style.cursor='default';
   }
@@ -475,223 +483,191 @@ function toggleFree() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  OPEN PURCHASE MODAL
+//  SUBSCRIPTION MODAL
 // ═══════════════════════════════════════════════════════════
-function openPurchase(book) {
-  pendingBook = book;
-  document.getElementById('pm-title').textContent = book.title;
-  document.getElementById('pm-sub').textContent   = `₹${book.price} · one-time purchase`;
+const SUB_UPI_ID = 'arohanchatterjee881@okicici';
+const SUB_PRICE  = 200;
+let _subPollInterval = null;
+let _subVerificationCode = null;
+let _usedSubUTRs = JSON.parse(localStorage.getItem('lk_sub_utrs') || '[]');
 
-  const upiId  = book.upi_id || 'yourname@upi';
-  const amount = book.price;
-
-  // UPI URL — ONLY used inside the QR image, never as a page redirect
-  const upiUrl = `upi://pay?pa=${enc(upiId)}&pn=${enc('Livekitaab')}&am=${amount}&cu=INR&tn=${enc('Livekitaab: '+book.title)}`;
-
-  document.getElementById('pm-amount').textContent   = `₹${amount}`;
-  document.getElementById('pm-upi-text').textContent = upiId;
-
-  // Draw QR
-  const el = document.getElementById('qrcode');
+function openSubModal() {
+  const upiUrl = `upi://pay?pa=${enc(SUB_UPI_ID)}&pn=${enc('LiveKitaab')}&am=${SUB_PRICE}&cu=INR&tn=${enc('LiveKitaab Subscription')}`;
+  const el = document.getElementById('sub-qrcode');
   el.innerHTML = '';
   new QRCode(el, { text:upiUrl, width:172, height:172, colorDark:'#3b2010', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
-
-  showPanel('pay');
-  openModal('purchaseModal');
+  document.getElementById('sm-upi-text').textContent = SUB_UPI_ID;
+  showSubPanel('pay');
+  openModal('subModal');
 }
 
-// ═══════════════════════════════════════════════════════════
-//  PANEL SYSTEM
-//  Panels: pay | utr | verifying | success | author
-// ═══════════════════════════════════════════════════════════
-const PANELS = ['pay','utr','verifying','success','author'];
-
-function showPanel(name) {
-  PANELS.forEach(p => document.getElementById('pp-'+p).style.display = 'none');
-  document.getElementById('pp-'+name).style.display = 'block';
-  document.getElementById('pm-steps').style.display = ['verifying','success','author'].includes(name) ? 'none' : 'flex';
-
-  // Step dot states
+const SUB_PANELS = ['pay','utr','verifying','success'];
+function showSubPanel(name) {
+  SUB_PANELS.forEach(p => {
+    const el = document.getElementById('sp-'+p);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('sp-'+name).style.display = 'block';
+  document.getElementById('sm-steps').style.display = ['verifying','success'].includes(name) ? 'none' : 'flex';
   const states = { pay:[1,[],[]], utr:[2,[1],[]], verifying:[3,[1,2],[]], success:[null,[1,2,3],[]] };
   const s = states[name];
   if (s) {
     [1,2,3].forEach(i => {
       const d = document.getElementById('sd'+i);
-      if (s[2].includes(i))      { d.className='sdot ok';  d.textContent='✓'; }
-      else if (s[0]===i)         { d.className='sdot on';  d.textContent=i; }
-      else                       { d.className='sdot';     d.textContent=i; }
+      if (!d) return;
+      if (s[2].includes(i))  { d.className='sdot ok'; d.textContent='✓'; }
+      else if (s[0]===i)     { d.className='sdot on'; d.textContent=i; }
+      else                   { d.className='sdot';    d.textContent=i; }
     });
-    document.getElementById('sl1').className = 'sline'+(s[1].includes(1)?' ok':'');
-    document.getElementById('sl2').className = 'sline'+(s[1].includes(2)?' ok':'');
+    if (document.getElementById('sl1')) document.getElementById('sl1').className = 'sline'+(s[1].includes(1)?' ok':'');
+    if (document.getElementById('sl2')) document.getElementById('sl2').className = 'sline'+(s[1].includes(2)?' ok':'');
   }
-
-  // Auto-focus inputs
-  if (name==='utr')    { document.getElementById('pm-utr').value='';       document.getElementById('utr-err').style.display='none';    setTimeout(()=>document.getElementById('pm-utr').focus(),60); }
-  if (name==='author') { document.getElementById('pm-authorkey').value=''; document.getElementById('author-err').style.display='none'; setTimeout(()=>document.getElementById('pm-authorkey').focus(),60); }
+  if (name==='utr') {
+    const el = document.getElementById('sm-utr');
+    if (el) { el.value=''; setTimeout(()=>el.focus(),60); }
+    const err = document.getElementById('sub-utr-err');
+    if (err) err.style.display='none';
+  }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  UTR VERIFICATION
-//
-//  Your Railway backend should handle:
-//  POST /verify-utr
-//  Body: { utr, book_id, amount, upi_id }
-//  Return: { verified: true } or { verified: false, reason: "..." }
-//
-//  If the endpoint isn't ready yet, see the catch block below —
-//  UTRs are logged to /log-utr for manual admin approval.
-// ═══════════════════════════════════════════════════════════
-// Polling state
-let _pollInterval = null;
-let _pendingVerificationCode = null;
-
-async function verifyUTR() {
-  const utr   = document.getElementById('pm-utr').value.trim().toUpperCase();
-  const errEl = document.getElementById('utr-err');
+async function verifySubUTR() {
+  const utr   = document.getElementById('sm-utr').value.trim().toUpperCase();
+  const errEl = document.getElementById('sub-utr-err');
   errEl.style.display = 'none';
 
   if (utr.length < 10) {
     errEl.textContent = 'Please enter a valid Transaction ID (at least 10 characters).';
     errEl.style.display = 'block'; return;
   }
-  if (usedUTRs.includes(utr)) {
-    errEl.textContent = 'This Transaction ID has already been used.';
+  if (_usedSubUTRs.includes(utr)) {
+    errEl.textContent = 'This Transaction ID has already been submitted.';
     errEl.style.display = 'block'; return;
   }
 
-  showPanel('verifying');
-  document.querySelector('#pp-verifying .spinner-label').textContent = 'Submitting payment…';
+  showSubPanel('verifying');
+  document.querySelector('#sp-verifying .spinner-label').textContent = 'Submitting payment…';
 
   try {
-    const res  = await fetch(`${API_URL}/api/request-purchase`, {
+    const res  = await fetch(`${API_URL}/api/request-subscription`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ book_id: pendingBook.id, price: pendingBook.price, transaction_id: utr })
+      body: JSON.stringify({ transaction_id: utr, price: SUB_PRICE })
     });
     const data = await res.json();
 
     if (data.error) {
-      showPanel('utr');
-      const e = document.getElementById('utr-err');
-      e.textContent = data.error === 'Transaction ID already used'
+      showSubPanel('utr');
+      errEl.textContent = data.error === 'Transaction ID already used'
         ? 'This Transaction ID has already been submitted.'
         : (data.error || 'Submission failed. Please try again.');
-      e.style.display = 'block';
+      errEl.style.display = 'block';
       return;
     }
 
-    // Submitted — now poll for admin approval
-    _pendingVerificationCode = data.verification_code;
-    usedUTRs.push(utr);
-    localStorage.setItem('lk_utrs', JSON.stringify(usedUTRs));
+    _subVerificationCode = data.verification_code;
+    _usedSubUTRs.push(utr);
+    localStorage.setItem('lk_sub_utrs', JSON.stringify(_usedSubUTRs));
 
-    document.querySelector('#pp-verifying .spinner-label').innerHTML =
+    document.querySelector('#sp-verifying .spinner-label').innerHTML =
       'Payment submitted ✓<br><small style="color:var(--text-light);font-size:.72rem;">Waiting for approval — usually a few minutes.</small>';
 
-    if (_pollInterval) clearInterval(_pollInterval);
-    _pollInterval = setInterval(() => pollApproval(pendingBook), 5000);
+    if (_subPollInterval) clearInterval(_subPollInterval);
+    _subPollInterval = setInterval(pollSubApproval, 5000);
 
-  } catch (e) {
-    showPanel('utr');
-    const e2 = document.getElementById('utr-err');
-    e2.textContent = 'Could not reach server. Check your connection and try again.';
-    e2.style.display = 'block';
+  } catch(e) {
+    showSubPanel('utr');
+    errEl.textContent = 'Could not reach server. Check your connection and try again.';
+    errEl.style.display = 'block';
   }
 }
 
-async function pollApproval(book) {
-  if (!_pendingVerificationCode) return;
+async function pollSubApproval() {
+  if (!_subVerificationCode) return;
   try {
-    const res  = await fetch(`${API_URL}/api/poll-purchase`, {
+    const res  = await fetch(`${API_URL}/api/poll-subscription`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ verification_code: _pendingVerificationCode, book_id: book.id })
+      body: JSON.stringify({ verification_code: _subVerificationCode })
     });
     const data = await res.json();
     if (data.approved) {
-      clearInterval(_pollInterval); _pollInterval = null; _pendingVerificationCode = null;
-      unlockBook(book);
+      clearInterval(_subPollInterval); _subPollInterval = null;
+      activateSubscription(_subVerificationCode, data.days || 30);
+      _subVerificationCode = null;
+      showSubPanel('success');
+      renderLibrary();
+      updateSubBanner();
+      setTimeout(() => closeModal('subModal'), 2500);
     }
   } catch { /* retry next tick */ }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  AUTHOR PASSKEY
-//
-//  How to set up:
-//  In library.json, add to any book:
-//    "author_key": "WHATEVER-YOU-CHOOSE"
-//  Give that exact string to the author.
-//  They type it here → instant free unlock.
-//  Change the key anytime by updating library.json.
-// ═══════════════════════════════════════════════════════════
-function verifyAuthorKey() {
-  const input  = document.getElementById('pm-authorkey').value.trim();
-  const errEl  = document.getElementById('author-err');
-  errEl.style.display = 'none';
-
-  if (!input) {
-    errEl.textContent = 'Please enter your author passkey.';
-    errEl.style.display = 'block'; return;
-  }
-
-  // Simple direct string comparison — no hashing, no external tools
-  const correct = pendingBook.author_key || '';
-
-  if (!correct) {
-    errEl.textContent = 'No author passkey has been set for this book yet. Contact the Livekitaab team.';
-    errEl.style.display = 'block'; return;
-  }
-
-  if (input === correct) {
-    unlockBook(pendingBook);
+// ── SUBSCRIPTION BANNER ────────────────────────────────────
+function updateSubBanner() {
+  const banner = document.getElementById('subBanner');
+  if (!banner) return;
+  if (isSubscribed()) {
+    const days = getSubDaysLeft();
+    banner.textContent = `⭐ Subscribed · ${days} day${days!==1?'s':''} left`;
+    banner.style.display = 'inline-flex';
+    banner.style.background = 'var(--green)';
+    banner.style.color = 'var(--brown-dark)';
   } else {
-    errEl.textContent = 'Incorrect passkey. Check for typos, or contact the Livekitaab team.';
-    errEl.style.display = 'block';
-    document.getElementById('pm-authorkey').select();
+    banner.textContent = '⭐ Subscribe ₹200/mo';
+    banner.style.display = 'inline-flex';
+    banner.style.background = 'var(--brown)';
+    banner.style.color = 'var(--cream)';
   }
 }
 
 // ═══════════════════════════════════════════════════════════
-//  UNLOCK
+//  PASSKEY (hidden staff access)
 // ═══════════════════════════════════════════════════════════
-function unlockBook(book) {
-  if (!ownedIds.includes(book.id)) {
-    ownedIds.push(book.id);
-    localStorage.setItem('lk_owned', JSON.stringify(ownedIds));
+function verifyPasskey() {
+  const input = document.getElementById('pk-input').value.trim();
+  const errEl = document.getElementById('pk-err');
+  errEl.style.display = 'none';
+  if (!input) { errEl.textContent='Enter your passkey.'; errEl.style.display='block'; return; }
+  if (STAFF_PASSKEYS.includes(input)) {
+    // Grant 30-day subscription via passkey
+    activateSubscription('PASSKEY-' + input, 30);
+    closeModal('passkeyModal');
+    renderLibrary();
+    updateSubBanner();
+    toast('🔓 Staff access granted for 30 days');
+  } else {
+    errEl.textContent = 'Incorrect passkey.';
+    errEl.style.display = 'block';
+    document.getElementById('pk-input').select();
   }
-  showPanel('success');
-  renderLibrary();
-  setTimeout(() => { closeModal('purchaseModal'); openReader(book); }, 1500);
 }
+
+// Hidden trigger — type HIDDEN_TRIGGER anywhere outside an input
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  _triggerBuffer += e.key.toLowerCase();
+  if (_triggerBuffer.length > HIDDEN_TRIGGER.length) {
+    _triggerBuffer = _triggerBuffer.slice(-HIDDEN_TRIGGER.length);
+  }
+  if (_triggerBuffer === HIDDEN_TRIGGER) {
+    _triggerBuffer = '';
+    document.getElementById('pk-input').value = '';
+    document.getElementById('pk-err').style.display = 'none';
+    openModal('passkeyModal');
+    setTimeout(() => document.getElementById('pk-input').focus(), 60);
+  }
+});
 
 // ═══════════════════════════════════════════════════════════
 //  READER
 // ═══════════════════════════════════════════════════════════
-const CORS_PROXY = 'https://your-proxy.YOUR-SUBDOMAIN.workers.dev';
-
-function normaliseLbkUrl(url) {
-  if (!url) return url;
-  if (/raw\.githubusercontent\.com/i.test(url)) return url;
-  const m = url.match(/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/i);
-  if (m) return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
-  if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
-    const ok = CORS_PROXY && !CORS_PROXY.includes('YOUR-SUBDOMAIN');
-    return ok ? `${CORS_PROXY}?url=${enc(url)}` : url;
-  }
-  return url;
-}
-
 function openReader(book) {
-  // For chapter-based books, pass chapters URL through unchanged.
-  // For single-file books, normalise the file URL.
   const payload = { ...book };
   if (book.chapters) {
-    payload.chapters = book.chapters; // chapters.json URL
+    payload.chapters = book.chapters;
     delete payload.file;
   } else {
-    const file = normaliseLbkUrl(book.file || '');
-    payload.file = file || book.file;
+    payload.file = book.file || '';
     delete payload.chapters;
   }
   sessionStorage.setItem('pending_book', JSON.stringify(payload));
@@ -699,11 +675,10 @@ function openReader(book) {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  COPY UPI ID
+//  COPY SUB UPI ID
 // ═══════════════════════════════════════════════════════════
-function copyUPI() {
-  const id = document.getElementById('pm-upi-text').textContent;
-  navigator.clipboard.writeText(id).then(()=>toast('UPI ID copied!')).catch(()=>{});
+function copySubUPI() {
+  navigator.clipboard.writeText(SUB_UPI_ID).then(()=>toast('UPI ID copied!')).catch(()=>{});
 }
 
 // ═══════════════════════════════════════════════════════════
