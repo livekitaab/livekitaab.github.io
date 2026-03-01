@@ -205,8 +205,12 @@
       <div class="stat-value gold" id="statPending">–</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-label">Total Purchases</div>
-      <div class="stat-value green" id="statTotal">–</div>
+      <div class="stat-label">Active Subscribers</div>
+      <div class="stat-value green" id="statSubs">–</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Sub Revenue</div>
+      <div class="stat-value" id="statSubRev">–</div>
     </div>
     <div class="stat-cell">
       <div class="stat-label">Total Revenue</div>
@@ -221,6 +225,14 @@
       <span class="badge" id="pendingBadge">0</span>
     </div>
     <div id="pendingList"></div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">
+      Active Subscriptions
+      <span class="badge green" id="subsBadge">–</span>
+    </div>
+    <div id="subsList"></div>
 
     <div class="divider"></div>
 
@@ -272,7 +284,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── LOAD DATA ─────────────────────────────────────────────
 async function loadAll() {
-  await Promise.all([loadPending(), loadRecent(), loadStats()]);
+  await Promise.all([loadPending(), loadRecent(), loadStats(), loadSubs()]);
 }
 
 async function loadStats() {
@@ -326,6 +338,62 @@ async function loadRecent() {
     el.innerHTML = '';
     list.forEach(p => el.appendChild(makeRecentCard(p)));
   } catch { }
+}
+
+// ── SUBSCRIPTIONS ─────────────────────────────────────────
+async function loadSubs() {
+  try {
+    const r = await fetch(`${API}/api/admin/subscriptions`, {
+      headers: { 'X-Admin-Key': ADMIN_KEY }
+    });
+    const d = await r.json();
+    const list = (d.subscriptions || []).filter(s => s.status === 'confirmed');
+
+    // Count active (not expired)
+    const now = new Date();
+    const active = list.filter(s => {
+      if (!s.confirmed_at) return false;
+      const expiry = new Date(s.confirmed_at);
+      expiry.setDate(expiry.getDate() + (s.days || 30));
+      return expiry > now;
+    });
+
+    document.getElementById('statSubs').textContent    = active.length;
+    document.getElementById('statSubRev').textContent  = '₹' + (list.length * 200);
+    document.getElementById('subsBadge').textContent   = active.length;
+
+    const el = document.getElementById('subsList');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><span>📋</span>No subscribers yet</div>';
+      return;
+    }
+    el.innerHTML = '';
+    list.slice().reverse().forEach(s => el.appendChild(makeSubCard(s)));
+  } catch (e) {
+    document.getElementById('subsList').innerHTML =
+      '<div class="empty-state">Could not load subscriptions</div>';
+  }
+}
+
+function makeSubCard(s) {
+  const card = document.createElement('div');
+  card.className = 'recent-card';
+  const confirmed = s.confirmed_at ? new Date(s.confirmed_at) : null;
+  const expiry    = confirmed ? new Date(confirmed) : null;
+  if (expiry) expiry.setDate(expiry.getDate() + (s.days || 30));
+  const now    = new Date();
+  const active = expiry && expiry > now;
+  const daysLeft = expiry ? Math.max(0, Math.ceil((expiry - now) / 86400000)) : 0;
+  const ts = confirmed ? confirmed.toLocaleString('en-IN') : '–';
+  card.innerHTML = `
+    <div class="recent-dot" style="background:${active?'var(--green)':'var(--red)'}"></div>
+    <div class="recent-info">
+      <div class="recent-book">${active ? '⭐ Active Subscriber' : '⏰ Expired'}</div>
+      <div class="recent-meta">${esc(s.transaction_id||'–')} · ${ts}${active?' · '+daysLeft+' days left':''}</div>
+    </div>
+    <div class="recent-amount">₹200</div>
+  `;
+  return card;
 }
 
 // ── CARD BUILDERS ──────────────────────────────────────────
