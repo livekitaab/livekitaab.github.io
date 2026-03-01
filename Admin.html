@@ -237,7 +237,7 @@
     <div class="divider"></div>
 
     <div class="section-title">
-      Recent Approvals
+      Books Read
       <span class="badge green" id="recentBadge">–</span>
     </div>
     <div id="recentList"></div>
@@ -323,21 +323,25 @@ async function loadPending() {
 
 async function loadRecent() {
   try {
-    const r = await fetch(`${API}/api/admin/recent-purchases`, {
+    const r = await fetch(`${API}/api/admin/read-counts`, {
       headers: { 'X-Admin-Key': ADMIN_KEY }
     });
     const d = await r.json();
-    const list = d.purchases || [];
-    document.getElementById('recentBadge').textContent = list.length;
+    const list = d.books || [];
+    const totalReads = list.reduce((s, b) => s + b.total_reads, 0);
+    document.getElementById('recentBadge').textContent = totalReads + ' reads';
 
     const el = document.getElementById('recentList');
     if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><span>📋</span>No approved purchases yet</div>';
+      el.innerHTML = '<div class="empty-state"><span>📖</span>No reads tracked yet</div>';
       return;
     }
     el.innerHTML = '';
-    list.forEach(p => el.appendChild(makeRecentCard(p)));
-  } catch { }
+    list.forEach((b, i) => el.appendChild(makeReadCard(b, i)));
+  } catch(e) {
+    document.getElementById('recentList').innerHTML =
+      '<div class="empty-state">Could not load read counts</div>';
+  }
 }
 
 // ── SUBSCRIPTIONS ─────────────────────────────────────────
@@ -419,17 +423,23 @@ function makePendingCard(p) {
   return card;
 }
 
-function makeRecentCard(p) {
+function makeReadCard(b, rank) {
   const card = document.createElement('div');
   card.className = 'recent-card';
-  const ts = p.confirmed_at ? new Date(p.confirmed_at).toLocaleString('en-IN') : '–';
+  const medals = ['🥇','🥈','🥉'];
+  const medal  = medals[rank] || '📖';
+  const bar    = b.total_reads > 0
+    ? `<div style="height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden;">
+         <div style="height:100%;border-radius:2px;background:var(--green);width:${Math.min(100, b.total_reads * 10)}%;transition:width .4s;"></div>
+       </div>` : '';
   card.innerHTML = `
-    <div class="recent-dot"></div>
+    <div class="recent-dot" style="background:var(--gold);font-size:1.1rem;width:auto;height:auto;border-radius:0;background:transparent;">${medal}</div>
     <div class="recent-info">
-      <div class="recent-book">${esc(p.book_id || '–')}</div>
-      <div class="recent-meta">${esc(p.transaction_id || '–')} &nbsp;·&nbsp; ${ts}</div>
+      <div class="recent-book">${esc(b.title || b.book_id)}</div>
+      <div class="recent-meta">Free: ${b.free_reads} &nbsp;·&nbsp; Subscribers: ${b.sub_reads}</div>
+      ${bar}
     </div>
-    <div class="recent-amount">₹${p.price ?? '–'}</div>
+    <div class="recent-amount" style="color:var(--gold);font-size:1rem;font-weight:700;">${b.total_reads}</div>
   `;
   return card;
 }
