@@ -592,12 +592,24 @@ async function pollSubApproval() {
     const data = await res.json();
     if (data.approved) {
       clearInterval(_subPollInterval); _subPollInterval = null;
-      activateSubscription(_subVerificationCode, data.days || 30);
+      const code = _subVerificationCode;
       _subVerificationCode = null;
+
+      // Store subscription locally first so it survives the redirect
+      activateSubscription(code, data.days || 30);
+
+      // Signal Account.html to show the register tab with welcome message
+      sessionStorage.setItem('lk_new_sub', JSON.stringify({
+        code,
+        days: data.days || 30,
+        reason: 'new_subscription'
+      }));
+
+      // Show brief success then redirect to account creation
       showSubPanel('success');
-      renderLibrary();
-      updateSubBanner();
-      setTimeout(() => closeModal('subModal'), 2500);
+      document.querySelector('#sp-success .success-sub').textContent =
+        'Taking you to create your account…';
+      setTimeout(() => { closeModal('subModal'); nav('Account.html'); }, 2000);
     }
   } catch { /* retry next tick */ }
 }
