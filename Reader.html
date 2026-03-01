@@ -312,6 +312,7 @@
 //  resolveUrl appended another ?url=, making a double param.
 // ═══════════════════════════════════════════════════════════
 const PROXY_BASE = 'https://web-production-a6ac9.up.railway.app/proxy';
+const API_URL    = 'https://web-production-a6ac9.up.railway.app';
 
 // ═══════════════════════════════════════════════════════════
 //  URL RESOLVER — builds correct fetch URL for any source
@@ -612,7 +613,7 @@ let _chapterIndex   = 1;    // how many chapters loaded so far
 let _loadingChapter = false;
 
 // Entry point A — multi-chapter books via chapters.json
-async function loadFromChaptersJson(chaptersJsonUrl, bookTitle) {
+async function loadFromChaptersJson(chaptersJsonUrl, bookTitle, bookId, isFree) {
   showLoader(true);
   document.getElementById('loadingState').style.display = 'none';
   _chapterQueue   = [];
@@ -636,6 +637,7 @@ async function loadFromChaptersJson(chaptersJsonUrl, bookTitle) {
     showLoader(false);
     Renderer.renderFirstChapter(ch1);
     showToast('📖 ' + title);
+    trackRead(bookId, title, isFree);
 
     // Store remaining chapters in queue
     _chapterQueue = chapters.slice(1);
@@ -747,6 +749,7 @@ async function loadFile(arrayBuffer, filename) {
     document.getElementById('loadingState').style.display = 'none';
     Renderer.renderBook(bookData, false);
     showToast('📖 Book loaded');
+    trackRead(book ? book.id : null, bookData.content?.meta?.title || filename, book ? book.price === 0 : true);
   } catch (e) {
     console.error(e);
     showToast('⚠ Could not load file: ' + e.message);
@@ -774,6 +777,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════════════════════════════════════════════════════════
+//  READ TRACKING
+// ═══════════════════════════════════════════════════════════
+function trackRead(bookId, bookTitle, isFree) {
+  if (!bookId) return;
+  try {
+    fetch(`${API_URL}/api/track-download`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ book_id: bookId, title: bookTitle || bookId, is_free: !!isFree })
+    }).catch(() => {}); // fire and forget — never block reading
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════
 //  BOOT — load book from sessionStorage (set by Main.html)
 // ═══════════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
@@ -786,7 +803,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ── Multi-chapter book: book.chapters points to a chapters.json URL ──
   if (book.chapters) {
-    loadFromChaptersJson(book.chapters, book.title);
+    loadFromChaptersJson(book.chapters, book.title, book.id, book.price === 0);
     return;
   }
 
