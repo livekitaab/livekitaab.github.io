@@ -255,6 +255,7 @@
         <button class="btn btn-ghost" onclick="closeModal('subModal')">Cancel</button>
         <button class="btn btn-green" onclick="showSubPanel('utr')">I've Paid →</button>
       </div>
+      <div class="author-toggle" onclick="openAuthorModal()">✍️ I'm the author of this book</div>
     </div>
     <!-- PANEL 2: UTR -->
     <div id="sp-utr" style="display:none">
@@ -312,6 +313,27 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('passkeyModal')">Cancel</button>
       <button class="btn btn-gold"  onclick="verifyPasskey()">🔓 Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTHOR PASSKEY MODAL -->
+<div class="modal-overlay" id="authorModal">
+  <div class="modal">
+    <div class="modal-title">✍️ Author Access</div>
+    <div class="modal-sub" id="author-modal-sub">Enter the passkey for this book.</div>
+    <div class="info-box gold" style="margin-bottom:14px;">
+      <div class="ibox-title gold">✍️ Author Passkey</div>
+      <div class="ibox-body">Enter the passkey you received from the LiveKitaab team when your book was published. This unlocks the book for you at no charge.</div>
+    </div>
+    <input class="field" id="author-pk-input" type="text"
+           placeholder="e.g. NONDI-PAYER-CHAP-2024"
+           autocomplete="off"
+           onkeydown="if(event.key==='Enter')verifyAuthorPasskey()">
+    <div class="err" id="author-pk-err"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('authorModal')">Cancel</button>
+      <button class="btn btn-gold"  onclick="verifyAuthorPasskey()">🔓 Unlock as Author</button>
     </div>
   </div>
 </div>
@@ -455,7 +477,8 @@ function makeCard(book) {
   if (canRead) {
     btn.className+=' btn-read'; btn.innerHTML='📖 Read'; btn.onclick=()=>openReader(book);
   } else if (hasFile) {
-    btn.className+=' btn-buy'; btn.innerHTML='⭐ Subscribe to Read'; btn.onclick=()=>openSubModal();
+    btn.className+=' btn-buy'; btn.innerHTML='⭐ Subscribe to Read';
+    btn.onclick=()=>{ _lastClickedBook = book; openSubModal(); };
   } else {
     btn.className+=' btn-muted'; btn.innerHTML='Coming Soon'; btn.disabled=true; btn.style.opacity='.5'; btn.style.cursor='default';
   }
@@ -669,6 +692,82 @@ document.addEventListener('keydown', (e) => {
     setTimeout(() => document.getElementById('pk-input').focus(), 60);
   }
 });
+
+// ═══════════════════════════════════════════════════════════
+//  AUTHOR PASSKEY
+//  Each book in library.json has an "author_key" field.
+//  Authors type it here → instant free access to that book
+//  without subscribing. Key is set per-book by the admin.
+// ═══════════════════════════════════════════════════════════
+let _authorBook = null; // book currently being unlocked via author key
+
+function openAuthorModal(book) {
+  // Can be called from the subscribe modal (no specific book — use last clicked)
+  // or directly from a book card with a book object
+  _authorBook = book || _lastClickedBook || null;
+  const sub = _authorBook
+    ? `Enter the passkey for "${_authorBook.title}"`
+    : 'Enter your author passkey to unlock this book.';
+  document.getElementById('author-modal-sub').textContent = sub;
+  document.getElementById('author-pk-input').value = '';
+  document.getElementById('author-pk-err').style.display = 'none';
+  // Close sub modal if open, then open author modal
+  closeModal('subModal');
+  openModal('authorModal');
+  setTimeout(() => document.getElementById('author-pk-input').focus(), 80);
+}
+
+function verifyAuthorPasskey() {
+  const input = document.getElementById('author-pk-input').value.trim();
+  const errEl = document.getElementById('author-pk-err');
+  errEl.style.display = 'none';
+
+  if (!input) {
+    errEl.textContent = 'Please enter your author passkey.';
+    errEl.style.display = 'block'; return;
+  }
+
+  // If we have a specific book, check its key
+  if (_authorBook) {
+    const correct = _authorBook.author_key || '';
+    if (!correct) {
+      errEl.textContent = 'No author passkey has been set for this book yet. Contact the LiveKitaab team.';
+      errEl.style.display = 'block'; return;
+    }
+    if (input === correct) {
+      closeModal('authorModal');
+      grantAuthorAccess(_authorBook);
+    } else {
+      errEl.textContent = 'Incorrect passkey. Check for typos or contact the LiveKitaab team.';
+      errEl.style.display = 'block';
+      document.getElementById('author-pk-input').select();
+    }
+    return;
+  }
+
+  // No specific book — check against all books in library (for when no book is selected)
+  const match = allBooks.find(b => b.author_key && b.author_key === input);
+  if (match) {
+    closeModal('authorModal');
+    grantAuthorAccess(match);
+  } else {
+    errEl.textContent = 'Passkey not recognised. Check for typos or contact the LiveKitaab team.';
+    errEl.style.display = 'block';
+    document.getElementById('author-pk-input').select();
+  }
+}
+
+function grantAuthorAccess(book) {
+  // Grant a long-term author subscription (365 days) stored locally
+  activateSubscription('AUTHOR-' + (book.author_key || book.id), 365);
+  renderLibrary();
+  updateSubBanner();
+  showToast('✍️ Author access granted — opening "' + book.title + '"…');
+  setTimeout(() => openReader(book), 900);
+}
+
+// Track last clicked book so the author modal knows which book to unlock
+let _lastClickedBook = null;
 
 // ═══════════════════════════════════════════════════════════
 //  READER
