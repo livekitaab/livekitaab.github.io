@@ -415,21 +415,55 @@ const LBKReader = {
   async fetchLBK(url) {
     const fetchUrl = resolveUrl(url);
     if (!fetchUrl) throw new Error('Cannot resolve URL: ' + url);
-    const r = await fetch(fetchUrl, { cache: 'no-store' });
-    if (!r.ok) throw new Error(`HTTP ${r.status} fetching chapter`);
+
+    let r;
+    try {
+      r = await fetch(fetchUrl, { cache: 'no-store' });
+    } catch (networkErr) {
+      // Retry once on network failure (common on mobile switching networks)
+      await new Promise(res => setTimeout(res, 1500));
+      r = await fetch(fetchUrl, { cache: 'no-store' });
+    }
+
+    if (!r.ok) throw new Error(`Could not load chapter (HTTP ${r.status}). Tap retry to try again.`);
+
     const buf = await r.arrayBuffer();
+
+    if (buf.byteLength < 10) {
+      throw new Error('Chapter file is empty or connection was cut. Tap retry.');
+    }
     const header = new Uint8Array(buf.slice(0, 4));
     if (!(header[0] === 0x50 && header[1] === 0x4B)) {
-      throw new Error('Chapter file corrupted or incomplete.');
+      throw new Error('Chapter file corrupted. Tap retry to load again.');
     }
     return LBKReader.parseLBK(buf);
   },
 
   // Fetch chapters.json → { meta, chapters: [{order, title, file}] }
+  // Always routes through proxy — chapters.json is on raw.githubusercontent.com
+  // which blocks CORS on most mobile browsers without the proxy.
   async fetchChapterList(chaptersJsonUrl) {
-    const r = await fetch(chaptersJsonUrl, { cache: 'no-store' });
-    if (!r.ok) throw new Error(`HTTP ${r.status} fetching chapter list`);
-    const data = await r.json();
+    // Route through proxy just like any other GitHub file
+    const fetchUrl = resolveUrl(chaptersJsonUrl) || chaptersJsonUrl;
+
+    let r;
+    try {
+      r = await fetch(fetchUrl, { cache: 'no-store' });
+    } catch (networkErr) {
+      // Network failure — retry once after a short delay
+      await new Promise(res => setTimeout(res, 1200));
+      r = await fetch(fetchUrl, { cache: 'no-store' });
+    }
+
+    if (!r.ok) throw new Error(`Could not load book list (HTTP ${r.status}). Check your connection and try again.`);
+
+    let data;
+    try {
+      data = await r.json();
+    } catch {
+      throw new Error('Book data appears corrupted. Please try again.');
+    }
+
     const sorted = (data.chapters || []).slice().sort((a, b) => a.order - b.order);
     return { meta: data, chapters: sorted };
   },
@@ -651,7 +685,14 @@ async function loadFromChaptersJson(chaptersJsonUrl, bookTitle, bookId, isFree) 
     const ls = document.getElementById('loadingState');
     ls.style.display = 'block';
     ls.querySelector('h2').textContent = '⚠ Could not load book';
-    ls.querySelector('p').textContent  = e.message;
+    ls.querySelector('p').innerHTML =
+      escHtml(e.message) +
+      '<br><br><button onclick="loadFromChaptersJson(' +
+        JSON.stringify(chaptersJsonUrl) + ',' +
+        JSON.stringify(bookTitle) + ',' +
+        JSON.stringify(bookId) + ',' +
+        JSON.stringify(isFree) +
+      ')" style="margin-top:8px;padding:9px 22px;background:var(--green);border:none;border-radius:20px;font-family:DM Sans,sans-serif;font-size:.85rem;font-weight:600;color:var(--brown-dark);cursor:pointer;">🔄 Tap to Retry</button>';
   }
 }
 
