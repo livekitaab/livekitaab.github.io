@@ -196,7 +196,7 @@
     <div class="banner-icon">📖</div>
     <div class="banner-text">
       <h1>Discover Your Next Story</h1>
-      <p>Curated fiction — novels, novellas &amp; short stories</p>
+      <p>Books for every young reader</p>
     </div>
   </div>
 
@@ -210,14 +210,12 @@
   </div>
 
   <div class="tab-strip">
-    <button class="tab-btn active" onclick="switchTab('novels',this)">📖 Novels</button>
-    <button class="tab-btn" onclick="switchTab('novellas',this)">📘 Novellas</button>
-    <button class="tab-btn" onclick="switchTab('shorts',this)">📝 Short Stories</button>
+    <button class="tab-btn active" onclick="switchTab('long',this)">📖 Long Books</button>
+    <button class="tab-btn" onclick="switchTab('short',this)">📝 Short Books</button>
   </div>
 
-  <div id="panel-novels"   class="tab-panel active"><div class="book-grid" id="grid-novels"></div></div>
-  <div id="panel-novellas" class="tab-panel"><div class="book-grid" id="grid-novellas"></div></div>
-  <div id="panel-shorts"   class="tab-panel"><div class="book-grid" id="grid-shorts"></div></div>
+  <div id="panel-long"  class="tab-panel active"><div class="book-grid" id="grid-long"></div></div>
+  <div id="panel-short" class="tab-panel"><div class="book-grid" id="grid-short"></div></div>
 
 </div>
 
@@ -351,19 +349,19 @@ const API_URL     = 'https://library-y7vs.onrender.com';
 //  FALLBACK (matches your real library.json structure)
 // ═══════════════════════════════════════════════════════════
 const FALLBACK_BOOKS = [
-  { id:'somoyer', title:'Somoyer Chabikathi', type:'novel', price:0, author:'Team Livekitaab',
+  { id:'somoyer', title:'Somoyer Chabikathi', type:'long_book', price:0, author:'Team Livekitaab',
     cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover.png',
     file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/Test.clbk',
     upi_id:'arohanchatterjee881@okicici', author_key:'LIVEKITAAB-SOMOYER-2024' },
-  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap', type:'novella', price:30, author:'Panpriyo Nondi',
+  { id:'ordhek_payer_chap', title:'Ordhek Payer Chap', type:'long_book', price:30, author:'Panpriyo Nondi',
     cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Payer Chap Cover.png',
     file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
     upi_id:'arohanchatterjee881@okicici', author_key:'NONDI-PAYER-CHAP-2024' },
-  { id:'Ek_Muhurter_Sporsho', title:'Ek Muhurter Sporsho', type:'short_story', price:1, author:'Shubhankar Babu',
+  { id:'Ek_Muhurter_Sporsho', title:'Ek Muhurter Sporsho', type:'short_book', price:1, author:'Shubhankar Babu',
     cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover2.png',
     file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/EMS.lbk',
     upi_id:'arohanchatterjee881@okicici', author_key:'BABU-EMS-2024' },
-  { id:'Jontrer_Songsar', title:'Poripati Jontrer Songsar', type:'short_story', price:1, author:'Shubhankar Babu',
+  { id:'Jontrer_Songsar', title:'Poripati Jontrer Songsar', type:'short_book', price:1, author:'Shubhankar Babu',
     cover:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Covers/Cover1.png',
     file:'https://raw.githubusercontent.com/achatterjee4561-cyber/library/main/Books/JS.lbk',
     upi_id:'arohanchatterjee881@okicici', author_key:'BABU-JS-2024' }
@@ -429,14 +427,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 //  RENDER
 // ═══════════════════════════════════════════════════════════
 function renderLibrary() {
-  const map = { novels:'novel', novellas:'novella', shorts:'short_story' };
+  const map = { long:'long_book', short:'short_book' };
   let shown = 0;
   for (const [key, type] of Object.entries(map)) {
     const grid = document.getElementById('grid-'+key);
     const list = allBooks.filter(b => b.type===type && (!filterFree || b.price===0));
     grid.innerHTML = '';
     if (!list.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span>🌿</span>No ${key} found.</div>`;
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span>🌿</span>No ${key.replace('_',' ')} found.</div>`;
     } else {
       list.forEach(b => grid.appendChild(makeCard(b)));
       shown += list.length;
