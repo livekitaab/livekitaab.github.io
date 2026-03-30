@@ -249,6 +249,80 @@
   .end-of-book-icon { font-size: 2rem; margin-bottom: 8px; }
   .end-of-book-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--brown-deep); margin-bottom: 6px; }
   .end-of-book-sub { font-family: 'Lora', serif; font-style: italic; font-size: .8rem; color: var(--text-light); }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREENSHOT WATERMARK
+     Flashes full-screen on PrintScreen / screenshot gesture.
+     Two layers:
+       #wm-overlay  — dark semi-transparent backdrop
+       #wm-stamp    — the actual watermark grid
+     CSS @media print also injects it for Ctrl+P grabs.
+  ═══════════════════════════════════════════════════════ */
+  #wm-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .06s ease-in;
+    background: rgba(0,0,0,.18);
+  }
+  #wm-overlay.flash {
+    opacity: 1;
+    animation: wm-flash .9s ease-out forwards;
+  }
+  @keyframes wm-flash {
+    0%   { opacity: 1; }
+    18%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  #wm-stamp {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0; overflow: hidden;
+    /* Diagonal tiling via rotation trick */
+    transform: rotate(-28deg) scale(1.5);
+  }
+
+  .wm-row {
+    display: flex; gap: 80px; margin: 28px 0; white-space: nowrap;
+  }
+  .wm-tile {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    user-select: none;
+  }
+  .wm-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 900; letter-spacing: .06em;
+    color: rgba(255,255,255,.28);
+    text-shadow: 0 1px 4px rgba(0,0,0,.4);
+    line-height: 1;
+  }
+  .wm-logo .wm-gold { color: rgba(247,231,181,.55); }
+  .wm-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(.48rem, 1.1vw, .6rem);
+    color: rgba(255,255,255,.18);
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .wm-url {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(.42rem, .9vw, .52rem);
+    color: rgba(255,255,255,.14);
+    letter-spacing: .08em;
+  }
+
+  /* Always-visible print watermark (Ctrl+P / save as PDF) */
+  @media print {
+    #wm-overlay {
+      opacity: 1 !important;
+      position: fixed !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -943,5 +1017,128 @@ function showToast(msg) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  SCREENSHOT WATERMARK SYSTEM
+//
+//  Triggers on:
+//  • PrintScreen key (desktop)
+//  • Ctrl+S / Meta+S (save page — grabs visible content)
+//  • Ctrl+Shift+S / common screenshot combos
+//  • Ctrl+P / Meta+P (print to PDF)
+//  • Page visibility change (catches most mobile
+//    screenshot gestures — iOS/Android briefly hide
+//    the page when the system takes a screenshot)
+//  • Window blur on mobile (second signal)
+//  • CSS @media print (always-on for print/PDF)
+// ═══════════════════════════════════════════════════════
+
+(function() {
+  const overlay = document.getElementById('wm-overlay');
+  const stamp   = document.getElementById('wm-stamp');
+  if (!overlay || !stamp) return;
+
+  // ── Build watermark tile grid ───────────────────────
+  function buildGrid() {
+    stamp.innerHTML = '';
+    // How many tiles we need to fill the rotated+scaled area
+    const cols = Math.ceil(window.innerWidth  / 240) + 4;
+    const rows = Math.ceil(window.innerHeight / 120) + 4;
+    for (let r = 0; r < rows; r++) {
+      const row = document.createElement('div');
+      row.className = 'wm-row';
+      for (let c = 0; c < cols; c++) {
+        const tile = document.createElement('div');
+        tile.className = 'wm-tile';
+        tile.innerHTML =
+          '<div class="wm-logo">Live<span class="wm-gold">Kitaab</span></div>' +
+          '<div class="wm-sub">© LiveKitaab 2026</div>' +
+          '<div class="wm-url">livekitaab.in</div>';
+        row.appendChild(tile);
+      }
+      stamp.appendChild(row);
+    }
+  }
+
+  // ── Flash the watermark ─────────────────────────────
+  let _flashTimer = null;
+  function flash() {
+    buildGrid();
+    overlay.classList.remove('flash');
+    // Force reflow so animation re-triggers even if called twice quickly
+    void overlay.offsetWidth;
+    overlay.classList.add('flash');
+    clearTimeout(_flashTimer);
+    _flashTimer = setTimeout(() => overlay.classList.remove('flash'), 950);
+  }
+
+  // ── Desktop: keyboard shortcuts ─────────────────────
+  document.addEventListener('keydown', function(e) {
+    const k = e.key;
+
+    // PrintScreen — works on Windows/Linux
+    if (k === 'PrintScreen') { flash(); return; }
+
+    // Ctrl/Meta + combos
+    const mod = e.ctrlKey || e.metaKey;
+    if (!mod) return;
+
+    // Ctrl+S (save), Ctrl+Shift+S (save as), Ctrl+P (print)
+    if (k === 's' || k === 'S') { flash(); return; }
+    if (k === 'p' || k === 'P') { flash(); return; }
+
+    // macOS: Cmd+Shift+3, Cmd+Shift+4, Cmd+Shift+5
+    if (e.shiftKey && (k === '3' || k === '4' || k === '5')) { flash(); return; }
+
+    // Windows Snipping Tool shortcut: Win+Shift+S (metaKey+Shift+S)
+    if (e.shiftKey && (k === 's' || k === 'S')) { flash(); return; }
+  }, true);
+
+  // ── Mobile: visibility change (most reliable signal) ─
+  // When the OS takes a screenshot, Chrome/Safari briefly
+  // set document.visibilityState to 'hidden' for a frame.
+  let _lastHidden = 0;
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+      _lastHidden = Date.now();
+    } else {
+      // Came back from hidden quickly = screenshot, not tab switch
+      const elapsed = Date.now() - _lastHidden;
+      if (elapsed > 0 && elapsed < 800) {
+        flash();
+      }
+    }
+  });
+
+  // ── Mobile: window blur (secondary signal) ──────────
+  // On some Android builds, the window blurs briefly during capture.
+  let _blurTime = 0;
+  window.addEventListener('blur', function() { _blurTime = Date.now(); });
+  window.addEventListener('focus', function() {
+    const elapsed = Date.now() - _blurTime;
+    if (_blurTime > 0 && elapsed > 0 && elapsed < 600) {
+      flash();
+      _blurTime = 0;
+    }
+  });
+
+  // ── Rebuild grid on resize ───────────────────────────
+  window.addEventListener('resize', buildGrid, { passive: true });
+
+  // ── Pre-build grid so first flash has no layout delay ─
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildGrid);
+  } else {
+    buildGrid();
+  }
+})();
+</script>
+
+
+<!-- ══ SCREENSHOT WATERMARK OVERLAY ══ -->
+<div id="wm-overlay" aria-hidden="true">
+  <div id="wm-stamp"></div>
+</div>
 </body>
 </html>
