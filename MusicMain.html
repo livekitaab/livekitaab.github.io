@@ -261,6 +261,8 @@
   }
   .tab-btn:hover:not(.active) { color: var(--text-mid); background: rgba(212,168,83,.04); }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn.crosslink { color: rgba(212,168,83,.5); border-left: 1px solid rgba(212,168,83,.15); }
+  .tab-btn.crosslink:hover { color: var(--gold); background: rgba(212,168,83,.06); }
 
   /* ── BOOK GRID ─────────────────────────────────────────── */
   .tab-panel { display: none; padding: 28px 20px 80px; animation: fadeIn .25s ease; }
@@ -507,6 +509,7 @@
       <a class="active" href="#" data-page="Main.html">Library</a>
       <a href="#" data-page="Reader.html">Reader</a>
       <a href="#" data-page="Account.html">Account</a>
+      <a href="#" data-page="Main.html" style="color:var(--gold);opacity:.7;font-weight:500;">📚 Kids</a>
     </div>
   </nav>
 
@@ -531,6 +534,7 @@
 
   <!-- TABS -->
   <div class="tab-strip">
+    <button class="tab-btn crosslink" onclick="nav('Main.html')">📚 Kids</button>
     <button class="tab-btn active" onclick="switchTab('long',this)">Long Books</button>
     <button class="tab-btn" onclick="switchTab('short',this)">Short Books</button>
   </div>
