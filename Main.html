@@ -65,6 +65,8 @@
   .tab-btn { flex:1; padding:13px 8px; text-align:center; font-family:'DM Sans',sans-serif; font-size:.84rem; font-weight:500; color:rgba(246,233,215,.55); cursor:pointer; border:none; background:transparent; transition:all .2s; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
   .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold-deep); }
   .tab-btn:hover:not(.active) { color:var(--cream); background:rgba(246,233,215,.06); }
+  .tab-btn.crosslink { color:rgba(212,168,83,.6); border-left:1px solid rgba(164,102,54,.25); }
+  .tab-btn.crosslink:hover { color:var(--gold); background:rgba(212,168,83,.08); }
 
   /* Shelf */
   .tab-panel { display:none; padding:28px 16px 80px; animation:fadeIn .2s ease;
@@ -189,6 +191,7 @@
       <a href="Main.html">Library</a>
       <a href="Reader.html">Reader</a>
       <a href="Account.html" class="btn-account">Account</a>
+      <a href="MusicMain.html" style="color:var(--gold-deep);font-weight:600;">🎵 Music</a>
     </div>
   </nav>
 
@@ -212,6 +215,7 @@
   <div class="tab-strip">
     <button class="tab-btn active" onclick="switchTab('long',this)">📖 Long Books</button>
     <button class="tab-btn" onclick="switchTab('short',this)">📝 Short Books</button>
+    <button class="tab-btn crosslink" id="musicTabBtn" onclick="nav('MusicMain.html')">🎵 Music</button>
   </div>
 
   <div id="panel-long"  class="tab-panel active"><div class="book-grid" id="grid-long"></div></div>
