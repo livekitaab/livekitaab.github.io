@@ -1,9 +1,3 @@
-<script disable-devtool-auto
-  src='https://cdn.jsdelivr.net/npm/disable-devtool'
-  disable-menu='true'
-  disable-select='false'
-  url='https://livekitaab.github.io'
-></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -400,20 +394,24 @@ const API_URL    = 'https://library-y7vs.onrender.com';
 function resolveUrl(url) {
   if (!url) return null;
 
-  // raw.githubusercontent.com — route through proxy for all sizes
-  if (/raw\.githubusercontent\.com/i.test(url)) {
-    return PROXY_BASE + '?url=' + encodeURIComponent(url);
+  // jsDelivr CDN URLs — serve directly, already has CORS + fast CDN
+  if (/cdn\.jsdelivr\.net/i.test(url)) return url;
+
+  // raw.githubusercontent.com → convert to jsDelivr (faster + CORS)
+  const rawMatch = url.match(/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)/i);
+  if (rawMatch) {
+    const [, user, repo, branch, path] = rawMatch;
+    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
   }
 
-  // github.com/user/repo/blob/branch/path → convert to raw then proxy
+  // github.com/user/repo/blob/branch/path → jsDelivr
   const blobMatch = url.match(/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/i);
   if (blobMatch) {
     const [, user, repo, branch, path] = blobMatch;
-    const raw = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
-    return PROXY_BASE + '?url=' + encodeURIComponent(raw);
+    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
   }
 
-  // GitHub Releases — always proxy (CDN blocks CORS)
+  // GitHub Releases — jsDelivr doesn't serve these, must use proxy
   if (/github\.com\/[^/]+\/[^/]+\/releases\/download\//i.test(url)) {
     return PROXY_BASE + '?url=' + encodeURIComponent(url);
   }
