@@ -401,14 +401,17 @@ function resolveUrl(url) {
   const rawMatch = url.match(/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)/i);
   if (rawMatch) {
     const [, user, repo, branch, path] = rawMatch;
-    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
+    // Encode spaces — jsDelivr requires %20 not literal spaces in paths
+    const sp1 = path.split('/').map(p => p.replace(/ /g,'%20')).join('/');
+    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${sp1}`;
   }
 
   // github.com/user/repo/blob/branch/path → jsDelivr
   const blobMatch = url.match(/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/i);
   if (blobMatch) {
     const [, user, repo, branch, path] = blobMatch;
-    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
+    const sp2 = path.split('/').map(p => p.replace(/ /g,'%20')).join('/');
+    return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${sp2}`;
   }
 
   // GitHub Releases — jsDelivr doesn't serve these, must use proxy
