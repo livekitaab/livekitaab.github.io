@@ -1,3 +1,9 @@
+<script disable-devtool-auto
+  src='https://cdn.jsdelivr.net/npm/disable-devtool'
+  disable-menu='true'
+  disable-select='false'
+  url='https://livekitaab.github.io'
+></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +51,6 @@
     overflow-x: hidden;
   }
 
-  /* ── VINYL GROOVE TEXTURE ──────────────────────────────── */
   body::before {
     content: '';
     position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -67,7 +72,6 @@
 
   #app { position: relative; z-index: 1; min-height: 100vh; }
 
-  /* ── TOP NAV ───────────────────────────────────────────── */
   .topnav {
     background: var(--groove);
     border-bottom: 1px solid var(--border-bright);
@@ -126,7 +130,6 @@
   .topnav-links a:hover { color: var(--gold); background: rgba(212,168,83,.08); }
   .topnav-links a.active { color: var(--gold); }
 
-  /* ── HERO ──────────────────────────────────────────────── */
   .hero {
     background: linear-gradient(160deg, var(--charcoal-deep) 0%, var(--charcoal-mid) 60%, #1e1508 100%);
     border-bottom: 1px solid var(--border);
@@ -216,7 +219,6 @@
     color: var(--text-mid); line-height: 1.5;
   }
 
-  /* ── FILTER BAR ────────────────────────────────────────── */
   .filter-bar {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 28px; background: var(--charcoal-mid);
@@ -245,7 +247,6 @@
   }
   #subBanner:hover { background: var(--gold); color: var(--charcoal-deep); }
 
-  /* ── TABS ──────────────────────────────────────────────── */
   .tab-strip {
     display: flex; background: var(--groove);
     border-bottom: 1px solid var(--border-bright);
@@ -264,7 +265,6 @@
   .tab-btn.crosslink { color: rgba(212,168,83,.5); border-left: 1px solid rgba(212,168,83,.15); }
   .tab-btn.crosslink:hover { color: var(--gold); background: rgba(212,168,83,.06); }
 
-  /* ── BOOK GRID ─────────────────────────────────────────── */
   .tab-panel { display: none; padding: 28px 20px 80px; animation: fadeIn .25s ease; }
   .tab-panel.active { display: block; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
@@ -299,7 +299,6 @@
     font-size: 2.2rem; color: var(--gold-line);
   }
 
-  /* Vinyl label overlay on cover */
   .cover-label {
     position: absolute; bottom: 0; left: 0; right: 0;
     height: 3px;
@@ -343,7 +342,6 @@
   }
   .empty-state span { display: block; font-size: 2.4rem; margin-bottom: 10px; opacity: .4; }
 
-  /* ── MODALS ────────────────────────────────────────────── */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 200;
     background: rgba(10,10,11,.75); backdrop-filter: blur(6px);
@@ -367,7 +365,6 @@
   @media (min-width: 600px) { .modal { border-radius: var(--radius); transform: translateY(0) scale(.96); } }
   .modal-overlay.open .modal { transform: translateY(0) scale(1); }
 
-  /* Gold accent line at top of modal */
   .modal::before {
     content: ''; display: block; height: 2px; margin: -28px -24px 24px;
     background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
@@ -379,7 +376,6 @@
   }
   .modal-sub { font-size: .78rem; color: var(--text-mid); margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; font-style: italic; }
 
-  /* Step dots */
   .steps { display: flex; align-items: center; margin-bottom: 22px; gap: 0; }
   .scol { display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .sdot {
@@ -427,7 +423,7 @@
   }
 
   .field {
-    width: 100%; padding: 11px 14px; border-radius: var(--radius-sm, 8px);
+    width: 100%; padding: 11px 14px; border-radius: 8px;
     background: var(--charcoal-deep); border: 1.5px solid var(--border);
     color: var(--text); font-family: 'DM Mono', monospace; font-size: .85rem;
     outline: none; transition: border-color .2s; margin-bottom: 10px;
@@ -480,7 +476,6 @@
   }
   .author-toggle:hover { color: var(--gold); }
 
-  /* ── TOAST ─────────────────────────────────────────────── */
   #toast {
     position: fixed; bottom: 28px; left: 50%;
     transform: translateX(-50%) translateY(70px);
@@ -496,7 +491,6 @@
 <body>
 <div id="app">
 
-  <!-- TOP NAV -->
   <nav class="topnav">
     <a class="topnav-brand" href="#" data-page="Main.html">
       <div class="brand-record"></div>
@@ -506,13 +500,13 @@
       </div>
     </a>
     <div class="topnav-links">
-      <a class="active" href="#" data-page="Main.html">Library</a>
+      <a class="active" href="#" data-page="MusicMain.html">Library</a>
       <a href="#" data-page="Reader.html">Reader</a>
       <a href="#" data-page="Account.html">Account</a>
+      <a href="#" data-page="Main.html" style="color:var(--gold);opacity:.7;font-weight:500;">📚 Kids</a>
     </div>
   </nav>
 
-  <!-- HERO -->
   <div class="hero">
     <div class="hero-vinyl"></div>
     <div class="hero-text">
@@ -522,7 +516,6 @@
     </div>
   </div>
 
-  <!-- FILTER BAR -->
   <div class="filter-bar">
     <span class="filter-label">Filter</span>
     <button class="chip" id="freeChip" onclick="toggleFree()">💿 Free Only</button>
@@ -531,7 +524,6 @@
     <span class="status-text" id="statusText">Loading…</span>
   </div>
 
-  <!-- TABS -->
   <div class="tab-strip">
     <button class="tab-btn crosslink" onclick="nav('Main.html')">📚 Kids</button>
     <button class="tab-btn active" onclick="switchTab('long',this)">Long Books</button>
@@ -541,7 +533,7 @@
   <div id="panel-long"  class="tab-panel active"><div class="book-grid" id="grid-long"></div></div>
   <div id="panel-short" class="tab-panel"><div class="book-grid" id="grid-short"></div></div>
 
-  <!-- ── SUBSCRIPTION MODAL ──────────────────────────────── -->
+  <!-- SUBSCRIPTION MODAL -->
   <div class="modal-overlay" id="subModal">
     <div class="modal">
       <div class="modal-title">Subscribe</div>
@@ -612,7 +604,7 @@
     </div>
   </div>
 
-  <!-- ── AUTHOR MODAL ─────────────────────────────────────── -->
+  <!-- AUTHOR MODAL -->
   <div class="modal-overlay" id="authorModal">
     <div class="modal">
       <div class="modal-title">Author Access</div>
@@ -632,7 +624,7 @@
     </div>
   </div>
 
-  <!-- ── STAFF PASSKEY MODAL ──────────────────────────────── -->
+  <!-- STAFF PASSKEY MODAL -->
   <div class="modal-overlay" id="passkeyModal">
     <div class="modal">
       <div class="modal-title">Staff Access</div>
@@ -653,12 +645,19 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-//  CONFIG  — point this at your music library JSON
+//  CONFIG
 // ══════════════════════════════════════════════════════════
-const LIBRARY_URL = 'https://cdn.jsdelivr.net/gh/livekitaab/music@latest/library.json';
 const API_URL     = 'https://library-y7vs.onrender.com';
 const SUB_UPI_ID  = 'arohanchatterjee881@okicici';
 const SUB_PRICE   = 200;
+
+// ── CACHE-BUSTED LIBRARY FETCH ─────────────────────────────
+// @latest = shorter CDN TTL than @main
+// ?t=Date.now() = unique URL every load, defeats mobile disk cache
+// cache:'no-store' = browser skips its own cache entirely
+function buildLibraryURL() {
+  return 'https://cdn.jsdelivr.net/gh/livekitaab/music@latest/library.json?t=' + Date.now();
+}
 
 const HIDDEN_TRIGGER = 'livekitaabmusic';
 const STAFF_PASSKEYS = ['LKMUSIC-STAFF-2026', 'LK-ADMIN-2026'];
@@ -682,8 +681,8 @@ function getSubDaysLeft() {
 }
 
 // ── STATE ─────────────────────────────────────────────────
-let allBooks       = [];
-let filterFree     = false;
+let allBooks        = [];
+let filterFree      = false;
 let _lastClickedBook = null;
 let _triggerBuffer   = '';
 
@@ -698,10 +697,17 @@ function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 window.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('a[data-page]').forEach(a => { a.href = navHref(a.dataset.page); });
   try {
-    const r = await fetch(LIBRARY_URL);
+    const r = await fetch(buildLibraryURL(), {
+      cache: 'no-store',                        // bypass browser disk cache
+      headers: { 'Cache-Control': 'no-cache' } // ask CDN for a fresh copy
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
-    allBooks = j.books || FALLBACK_BOOKS;
-  } catch { allBooks = FALLBACK_BOOKS; }
+    allBooks = (j.books && j.books.length) ? j.books : FALLBACK_BOOKS;
+  } catch(err) {
+    console.warn('Library fetch failed, using fallback:', err);
+    allBooks = FALLBACK_BOOKS;
+  }
   renderLibrary();
   updateSubBanner();
 });
@@ -748,7 +754,6 @@ function makeCard(book) {
   const card = document.createElement('div');
   card.className = 'book-card';
 
-  // Build cover wrap using DOM — avoids any nested quote issues
   const coverWrap = document.createElement('div');
   coverWrap.className = 'cover-wrap';
   if (book.cover) {
@@ -860,8 +865,7 @@ function showSubPanel(name) {
   const s = states[name];
   if (s) {
     [1,2,3].forEach(i => {
-      const d = document.getElementById('sd'+i);
-      if (!d) return;
+      const d = document.getElementById('sd'+i); if(!d) return;
       if (s[2].includes(i))  { d.className='sdot ok'; d.textContent='✓'; }
       else if (s[0]===i)     { d.className='sdot on'; d.textContent=i; }
       else                   { d.className='sdot';    d.textContent=i; }
