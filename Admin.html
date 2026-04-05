@@ -184,6 +184,22 @@
   .read-bar-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .5s; }
   .read-count { font-size: 1rem; font-weight: 700; color: var(--gold); flex-shrink: 0; font-family: 'Playfair Display', serif; }
 
+  /* ── PURGE BAR ─────────────────────────────────────── */
+  .purge-bar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 10px 24px; display: flex; align-items: center; gap: 14px;
+  }
+  .purge-label { font-family:'DM Mono',monospace; font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
+  .purge-btn {
+    background: var(--gold-dim); border: 1px solid var(--gold-line);
+    color: var(--gold); padding: 6px 16px; border-radius: 20px;
+    font-family:'DM Sans',sans-serif; font-size:.75rem; font-weight:600;
+    cursor: pointer; transition: all .18s;
+  }
+  .purge-btn:hover { background: var(--gold); color: var(--bg); }
+  .purge-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .purge-status { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--text-mid); }
+
   /* ── TOAST ────────────────────────────────────────────── */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -244,7 +260,13 @@
     </div>
   </div>
 
-  <div class="content">
+  <div class="purge-bar">
+  <span class="purge-label">CDN Cache</span>
+  <button class="purge-btn" id="purgeBtn" onclick="purgeAll()">🔄 Purge jsDelivr Cache</button>
+  <span class="purge-status" id="purgeStatus"></span>
+</div>
+
+<div class="content">
 
     <!-- Pending UTRs -->
     <div class="section-header">
@@ -550,6 +572,46 @@ function toast(msg, type = '') {
   t.className = 'show' + (type ? ' ' + type : '');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ── CDN CACHE PURGE ────────────────────────────────────
+const PURGE_URLS = ["https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Books/EMS.lbk", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Books/JS.lbk", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Books/PCO.lbk", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Cover%20Frayed.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Cover.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Cover1.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Cover2.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Payer%20Chap%20Cover.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/Covers/Sahaj%20Path%20Cover.png", "https://cdn.jsdelivr.net/gh/achatterjee4561-cyber/library@main/library.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/ABCD1/Chapters.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab1/1.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab1/2.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab1/3.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab1/Chapters.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab2/1.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab2/Chapters.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/AeFab3/3.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/Nursery%20Rhymes/1.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/Nursery%20Rhymes/2.lbk", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/Ordhek%20Payer%20Chap/Chapter.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/Sohoj%20Path/Chapters.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Books/Somoyer%20Chabikathi/Chapter.json", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverAeFab1.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverAeFab2.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverBW.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverCP.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverDR.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverEMS.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverGA.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverHT.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverLM.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverNR1.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/Covers/CoverNR2.png", "https://cdn.jsdelivr.net/gh/livekitaab/library@main/library.json", "https://cdn.jsdelivr.net/gh/livekitaab/music@main/library.json"];
+
+async function purgeAll() {
+  const btn    = document.getElementById('purgeBtn');
+  const status = document.getElementById('purgeStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Purging…';
+  status.textContent = '';
+
+  let ok = 0, fail = 0;
+
+  // jsDelivr purge API — one request per URL
+  // Rate limited, so we batch with small delays
+  for (let i = 0; i < PURGE_URLS.length; i++) {
+    const url = PURGE_URLS[i];
+    // Convert CDN URL to purge API URL
+    // https://cdn.jsdelivr.net/gh/USER/REPO@BRANCH/PATH
+    // → https://purge.jsdelivr.net/gh/USER/REPO@BRANCH/PATH
+    const purgeUrl = url.replace('cdn.jsdelivr.net', 'purge.jsdelivr.net');
+    try {
+      const r = await fetch(purgeUrl);
+      if (r.ok) { ok++; } else { fail++; }
+    } catch { fail++; }
+    status.textContent = `${i+1}/${PURGE_URLS.length} purged…`;
+    // Small delay to avoid rate limiting
+    if (i < PURGE_URLS.length - 1) await new Promise(r => setTimeout(r, 80));
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔄 Purge jsDelivr Cache';
+  if (fail === 0) {
+    status.textContent = `✅ All ${ok} files purged — changes live in ~30s`;
+    toast('✅ CDN cache purged!', 'ok');
+  } else {
+    status.textContent = `⚠ ${ok} ok, ${fail} failed`;
+    toast(`CDN purge: ${ok} ok, ${fail} failed`, 'err');
+  }
 }
 </script>
 </body>
